@@ -2,8 +2,9 @@
 
 import argparse
 import getpass
-import urllib3
+
 import requests
+import urllib3
 from avi.sdk.avi_api import ApiSession
 
 # Common utility functions

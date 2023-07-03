@@ -23,3 +23,7 @@ Script to list and delete licenses from the Controller. This is particularly use
 ## vmac.py
 
 This simple script outputs the virtual MAC address that the system would use when Virtual MAC is enabled in the network service for floating IP addresses.
+
+## inventory_report.py
+
+This script uses the Inventory APIs to export summary information about VS, Pool or Service Engines to a CSV file that can then be used for reporting purposes.

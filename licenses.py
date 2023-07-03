@@ -1,11 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 import argparse
 import getpass
 from datetime import datetime
-from avi.sdk.avi_api import ApiSession
-import urllib3
+
 import requests
+import urllib3
+from avi.sdk.avi_api import ApiSession
+from tabulate import tabulate
+
 
 def try_parsing_date(possible_date):
     """
@@ -72,10 +75,7 @@ if __name__ == '__main__':
         if args.list:
             licenses = api.get('licensing').json()
             print('Licenses present:')
-            print('Expires                SUs License ID'
-                '                       Name')
-            print('---------------------------------------'
-                '---------------------------------------')
+            license_list=[]
             for lic in licenses['licenses']:
                 license_id = lic.get('license_id', '???')
                 license_name = lic.get('license_name', '???')
@@ -83,8 +83,11 @@ if __name__ == '__main__':
                 license_expiry = (try_parsing_date(license_valid_until)
                                   if license_valid_until else '???')
                 license_cores = lic.get('cores', 'N/A')
-                print(f'{license_expiry} {license_cores:6} '
-                      f'{license_id:32} {license_name}')
+                license_list.append([license_expiry, license_cores,
+                                     license_id, license_name])
+            print(tabulate(license_list,
+                           headers=['Expires', 'SUs', 'License ID', 'Name'],
+                           tablefmt='outline'))
         elif args.deleteexpired:
             licenses = api.get('licensing').json()
             now = datetime.now()

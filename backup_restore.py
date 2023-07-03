@@ -2,12 +2,12 @@
 
 import argparse
 import getpass
-from fnmatch import fnmatch
-from avi.sdk.avi_api import ApiSession
-import urllib3
-import requests
 import json
+from fnmatch import fnmatch
 
+import requests
+import urllib3
+from avi.sdk.avi_api import ApiSession
 
 class BackupRestore:
     def __init__(self, api, filename, passphrase, tenant='*', confirm=False):

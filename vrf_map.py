@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-from fnmatch import fnmatch
-from tabulate import tabulate
 import getpass
-import urllib3
+from fnmatch import fnmatch
+
 import requests
+import urllib3
 from avi.sdk.avi_api import ApiSession
+from tabulate import tabulate
 
 # Common utility functions
 
@@ -104,7 +105,7 @@ if __name__ == '__main__':
                     if vrf_name != 'seagent-default':
                         table.append([vrf_name, namespace])
                 print(tabulate(table, headers=['VRF', 'Namespace'],
-                               tablefmt="grid"))
+                               tablefmt='grid'))
                 print()
     else:
         parser.print_help()
