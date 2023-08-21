@@ -25,6 +25,8 @@ Example scheduler configuration:
 +------------------+------------------------------------------------+
 ```
 
+When the script is run, it will display output to the EVENTS log (including if there were no Virtual Services found with CI enabled or if there were any API errors), but you must enable the "Include Internal" filter to see these events
+
 ## clear_alerts.py
 
 This ControlScript should be triggered to run on the VS_UP EVENT and will automatically clear any previous alerts generated for the VS_DOWN EVENT for that VS.
