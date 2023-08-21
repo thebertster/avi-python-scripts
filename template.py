@@ -7,36 +7,6 @@ import requests
 import urllib3
 from avi.sdk.avi_api import ApiSession
 
-# Common utility functions
-
-def get_all(api, *args, params=None, **kwargs):
-    # Iterates through paged results, returning all
-
-    retries = 0
-    page = 1
-    results = []
-    if not params:
-        params = {}
-    if 'page_size' not in params:
-        params['page_size'] = 50
-    while page:
-        params['page'] = page
-        r = api.get(*args, params=params, **kwargs)
-        if r.status_code in (401, 419) and retries < 5:
-            ApiSession.reset_session(api)
-            retries += 1
-            continue
-        elif r.status_code != 200:
-            raise(RuntimeError(f'Unexpected error in get_paged: {r}'))
-        r_json = r.json()
-        results.extend(r_json['results'])
-        if 'next' in r_json:
-            page += 1
-        else:
-            page = 0
-    return {'count': len(results),
-            'results': results}
-
 # Disable certificate warnings
 
 if hasattr(requests.packages.urllib3, 'disable_warnings'):

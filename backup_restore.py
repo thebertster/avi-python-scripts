@@ -33,12 +33,13 @@ class BackupRestore:
         print('Looking for matching Virtual Services...')
 
 
-        vs_list = self.get_all('virtualservice',
-                                params={'fields': 'name,uuid,tenant_ref',
-                                        'include_name': 'true'},
-                                tenant=tenant)
+        vs_list = self.api.get_objects_iter('virtualservice',
+                                            params={'fields':
+                                                'name,uuid,tenant_ref',
+                                                'include_name': 'true'},
+                                            tenant=tenant)
 
-        for vs in vs_list['results']:
+        for vs in vs_list:
             vs_name = vs['name']
             if fnmatch(vs_name, vs_match):
                 tenant_name = vs['tenant_ref'].split('#')[1]
@@ -115,34 +116,6 @@ class BackupRestore:
             rsp = self.api.post(uri, data=data, tenant=tenant_name)
             if rsp.status_code >= 300:
                 raise Exception(f'Error restoring {vs_name}: {rsp.text}')
-
-    def get_all(self, *args, params=None, **kwargs):
-        # Iterates through paged results, returning all
-
-        retries = 0
-        page = 1
-        results = []
-        if not params:
-            params = {}
-        if 'page_size' not in params:
-            params['page_size'] = 50
-        while page:
-            params['page'] = page
-            r = self.api.get(*args, params=params, **kwargs)
-            if r.status_code in (401, 419) and retries < 5:
-                ApiSession.reset_session(api)
-                retries += 1
-                continue
-            elif r.status_code != 200:
-                raise(RuntimeError(f'Unexpected error in get_paged: {r}'))
-            r_json = r.json()
-            results.extend(r_json['results'])
-            if 'next' in r_json:
-                page += 1
-            else:
-                page = 0
-        return {'count': len(results),
-                'results': results}
 
 # Disable certificate warnings
 

@@ -1,42 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import getpass
 import csv
+import getpass
+
 import requests
 import urllib3
 from avi.sdk.avi_api import ApiSession
 from tabulate import tabulate
-
-# Common utility functions
-
-def get_all(api, *args, params=None, **kwargs):
-    # Iterates through paged results, returning all
-
-    retries = 0
-    page = 1
-    results = []
-    if not params:
-        params = {}
-    if 'page_size' not in params:
-        params['page_size'] = 50
-    while page:
-        params['page'] = page
-        r = api.get(*args, params=params, **kwargs)
-        if r.status_code in (401, 419) and retries < 5:
-            ApiSession.reset_session(api)
-            retries += 1
-            continue
-        elif r.status_code != 200:
-            raise(RuntimeError(f'Unexpected error in get_paged: {r}'))
-        r_json = r.json()
-        results.extend(r_json['results'])
-        if 'next' in r_json:
-            page += 1
-        else:
-            page = 0
-    return {'count': len(results),
-            'results': results}
 
 # Disable certificate warnings
 
@@ -96,9 +67,9 @@ if __name__ == '__main__':
         headers = []
 
         if inventory_type == 'vs':
-            vs_inventory = get_all(api, 'virtualservice-inventory',
+            vs_inventory = api.get_objects_iter('virtualservice-inventory',
                                    params={'include_name': True})
-            for vs in vs_inventory['results']:
+            for vs in vs_inventory:
                 vs_config = vs['config']
                 vs_runtime = vs['runtime']
                 vs_name = vs_config['name']
@@ -146,13 +117,13 @@ if __name__ == '__main__':
                                      vs_app_type, vs_waf, vs_enabled,
                                      vs_state, vs_hs, vs_selist])
             headers = ['Name', 'UUID', 'Tenant', 'Cloud', 'VRF', 'Type', 'SEG',
-                       'VIPs', 'FQDNs', 'Ports', 'Pools', 'Pool Groups', 'Type',
-                       'WAF', 'State', 'Oper State', 'Health Score',
+                       'VIPs', 'FQDNs', 'Ports', 'Pools', 'Pool Groups',
+                       'App Type', 'WAF', 'State', 'Oper State', 'Health Score',
                        'Service Engines']
         elif inventory_type in ('pool', 'pooldetail'):
-            p_inventory = get_all(api, 'pool-inventory',
-                                  params={'include_name': True})
-            for p in p_inventory['results']:
+            p_inventory = api.get_objects_iter('pool-inventory',
+                                               params={'include_name': True})
+            for p in p_inventory:
                 p_config = p['config']
                 p_runtime = p['runtime']
                 p_name = p_config['name']
@@ -171,14 +142,15 @@ if __name__ == '__main__':
                           p_servers, p_state, p_hs, p_vs]
 
                 if inventory_type == 'pooldetail':
-                    ps_inventory = get_all(api, f'pool-inventory/{p_uuid}/server',
-                                       params={'include_name': True})
+                    ps_inventory = api.get_objects_iter(
+                        f'pool-inventory/{p_uuid}/server',
+                        params={'include_name': True})
                     p_servers = [(ps['config']['ip']['addr'],
                                   ps['config']['port'],
                                 ps['runtime']['oper_status']['state'].split(
                                     'OPER_')[1],
                                 ps['health_score']['health_score'])
-                                for ps in ps_inventory['results']]
+                                for ps in ps_inventory]
                     p_servers = ','.join([f'{a}' +
                                         (f':{b}' if b != p_port else '') +
                                         f' [{c},{d}]'
@@ -191,9 +163,9 @@ if __name__ == '__main__':
             if inventory_type == 'pooldetail':
                 headers.extend(['Servers'])
         elif inventory_type == 'se':
-            s_inventory = get_all(api, 'serviceengine-inventory',
-                                  params={'include_name': True})
-            for s in s_inventory['results']:
+            s_inventory = api.get_objects_iter('serviceengine-inventory',
+                                               params={'include_name': True})
+            for s in s_inventory:
                 s_config = s['config']
                 s_runtime = s['runtime']
                 s_name = s_config['name']
