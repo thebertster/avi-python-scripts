@@ -43,7 +43,7 @@ if __name__ == "__main__":
                 ci_curr = vs['analytics_policy']['client_insights']
                 print(f'Virtual Service {vs_name} has CI {ci_curr} >> ')
                 data = {
-                    "json_patch": [
+                    'json_patch': [
                         {
                             'op': 'replace',
                             'path': '/analytics_policy/client_insights',
@@ -57,7 +57,7 @@ if __name__ == "__main__":
                     print(f'CI disabled for Virtual Service {vs_name}')
                 else:
                     print(f'Failed to disable CI for Virtual Service {vs_name}')
-                    print(f'Error: {upd}')
+                    print(f'Error: {upd.status_code}: {upd.text}')
                 print(' || ')
         else:
             print(f'VS Query returned error: {resp}')

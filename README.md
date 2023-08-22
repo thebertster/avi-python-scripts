@@ -73,3 +73,15 @@ This will list all orphaned objects in any tenant of type Pool,PoolGroup,HTTPPol
 Removes any ciphers that are classed as unsafe or inadequate according to [Appendix A of RFC7450](https://datatracker.ietf.org/doc/html/rfc7540#appendix-A).
 
 These are the ciphers that would trigger the Controller Fault warning "Unsafe ciphers used in SSL Profile: \[xxx\]"
+
+## replace_certificates.py
+
+Replaces certificates in Virtual Services.
+
+*Example:*
+
+This will replace references to "System-Default-Cert" with "My-Wildcard-Cert" and "System-Default-Cert-EC" with "My-Wildcard-Cert-EC"
+
+`replace_certificates.py -c <controller> -t example_tenant System-Default-Cert,System-Default-Cert-EC My-Wildcard-Cert,My-Wildcard-Cert-EC`
+
+Note: When running in all tenants (`-t *`) where certificates of the same name may exist in multiple tenants, it may be necessary to specify the certificates using their UUIDs rather than their names.
