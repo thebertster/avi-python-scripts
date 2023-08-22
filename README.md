@@ -67,3 +67,9 @@ Lists objects within the Controller that are not used or referenced by any other
 This will list all orphaned objects in any tenant of type Pool,PoolGroup,HTTPPolicySet or L4PolicySet and prompt the user whether to delete each orphaned object that is found:
 
 `unused_objects.py -c <controller> -t * -o pool,poolgroup,httppolicyset,l4policyset -d`
+
+## remove_ciphers.py
+
+Removes any ciphers that are classed as unsafe or inadequate according to [Appendix A of RFC7450](https://datatracker.ietf.org/doc/html/rfc7540#appendix-A).
+
+These are the ciphers that would trigger the Controller Fault warning "Unsafe ciphers used in SSL Profile: \[xxx\]"
