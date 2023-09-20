@@ -85,3 +85,24 @@ This will replace references to "System-Default-Cert" with "My-Wildcard-Cert" an
 `replace_certificates.py -c <controller> -t example_tenant System-Default-Cert,System-Default-Cert-EC My-Wildcard-Cert,My-Wildcard-Cert-EC`
 
 Note: When running in all tenants (`-t *`) where certificates of the same name may exist in multiple tenants, it may be necessary to specify the certificates using their UUIDs rather than their names.
+
+## user_tokens.py
+
+Lists, creates or deletes user API authentication tokens. This script requires SuperUser privileges.
+
+When creating a token, omitting expiry time will create a one-time-use token.
+When listing tokens, omitting a user name will list all tokens for all users.
+
+*Examples:*
+
+This will list any authentication tokens for user "example-user":
+
+`user_tokens.py -c <controller> list -u example-user`
+
+This will delete a specific token (obtain the token's UUID using the list operation):
+
+`user_tokens.py -c <controller> delete <token-uuid>`
+
+This will create a new token for user "example-user" time-limited to 3 hours:
+
+`user_tokens.py -c <controller> create example-user -e 3`
