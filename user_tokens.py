@@ -114,6 +114,7 @@ if __name__ == '__main__':
                                headers=['UUID', 'Expires', 'Token'],
                                tablefmt='outline'))
             else:
-                raise Exception(f'Error creating token for {auth_user}: {rsp.text}')
+                raise Exception(f'Error creating token for '
+                                f'{auth_user}: {rsp.text}')
     else:
         parser.print_help()

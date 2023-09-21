@@ -106,3 +106,9 @@ This will delete a specific token (obtain the token's UUID using the list operat
 This will create a new token for user "example-user" time-limited to 3 hours:
 
 `user_tokens.py -c <controller> create example-user -e 3`
+
+## waf_report.py
+
+Prints a table of configured WAF Policies, which VSs use each policy and the policy mode (enforcement/detection) and paranoia level.
+
+`waf_report.py -c <controller> -t <tenant>`
