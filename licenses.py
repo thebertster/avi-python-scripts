@@ -31,7 +31,7 @@ if hasattr(urllib3, 'disable_warnings'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-                        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-c', '--controller',
                         help='FQDN or IP address of Avi Vantage controller')
     parser.add_argument('-u', '--user', help='Avi Vantage username',

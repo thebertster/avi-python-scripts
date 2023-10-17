@@ -127,7 +127,7 @@ if hasattr(urllib3, 'disable_warnings'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('operation', choices=('backup', 'restore'))
     parser.add_argument('filename', help='Backup filename')
     parser.add_argument('-e', '--passphrase', help='Encryption passphrase')

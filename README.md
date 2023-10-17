@@ -36,7 +36,13 @@ Script to list and delete licenses from the Controller. This is particularly use
 
 ## vmac.py
 
-This simple script outputs the virtual MAC address that the system would use when Virtual MAC is enabled in the network service for floating IP addresses.
+Script to calculate the Virtual MACs used for floating IPs in Network Services.
+
+*Example:*
+
+This will print out the VMAC corresponding to all Floating IPs defined in Network Service "example_ns" in tenant "example_tenant":
+
+`vmac.py -c <controller> -t example_tenant -n example_ns`
 
 ## inventory_report.py
 

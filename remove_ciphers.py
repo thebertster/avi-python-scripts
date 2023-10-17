@@ -36,7 +36,7 @@ UNSAFE_CIPHERS = {
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-c', '--controller',
                         help='FQDN or IP address of NSX ALB Controller')
     parser.add_argument('-u', '--user', help='NSX ALB API Username',
