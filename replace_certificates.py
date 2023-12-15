@@ -28,9 +28,11 @@ if __name__ == '__main__':
                         default='admin')
     parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
     parser.add_argument('search_certs',
-               help='Comma-separated list of certificates to search for')
+                        help='Comma-separated list of certificates '
+                        'to search for')
     parser.add_argument('replace_certs',
-               help='Comma-separated list of replacement certificates')
+                        help='Comma-separated list of replacement '
+                        'certificates')
 
     args = parser.parse_args()
 
@@ -80,7 +82,7 @@ if __name__ == '__main__':
                                                 search,
                                                 tenant=tenant,
                                                 params={'fields':
-                                                    'uuid,url,name'})
+                                                        'uuid,url,name'})
 
             if replace.startswith('sslkeyandcertificate-'):
                 rsp = api.get(f'sslkeyandcertificate/{replace}',
@@ -95,7 +97,7 @@ if __name__ == '__main__':
                                                 replace,
                                                 tenant=tenant,
                                                 params={'fields':
-                                                    'uuid,url,name'})
+                                                        'uuid,url,name'})
 
             if s_cert and r_cert:
                 s_uuid = s_cert['uuid']
@@ -103,13 +105,11 @@ if __name__ == '__main__':
                 r_url = r_cert['url']
                 s_name = s_cert['name']
                 r_name = r_cert['name']
+                vs_params = {'refers_to': f'sslkeyandcertificate:{s_uuid}',
+                             'fields': 'ssl_key_and_certificate_refs'}
                 vs_list = api.get_objects_iter('virtualservice',
-                                           params={
-                                               'refers_to':
-                                               f'sslkeyandcertificate:{s_uuid}',
-                                               'fields':
-                                               'ssl_key_and_certificate_refs'},
-                                           tenant=tenant)
+                                               params=vs_params,
+                                               tenant=tenant)
                 for vs in vs_list:
                     vs_name = vs['name']
                     print(f'Updating VS {vs_name}: {s_name} -> {r_name}')

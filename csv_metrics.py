@@ -33,13 +33,12 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--tenant', help='Tenant',
                         default='admin')
     parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
-    parser.add_argument('-v', '--virtualservice', help='Virtual Service Name')
     parser.add_argument('-m', '--metrics',
                         help='Comma-separated list of metric Ids',
                         default='l4_client.avg_rx_bytes,l4_client.avg_tx_bytes')
     parser.add_argument('-g', '--granularity',
                         help='Granularity of metrics',
-                        choices=['realtime','5min','hour','day'],
+                        choices=['realtime', '5min', 'hour', 'day'],
                         default='5min')
     parser.add_argument('-e', '--end',
                         help='End date/time for metrics in ISO8601 '
@@ -48,6 +47,8 @@ if __name__ == '__main__':
                         help='Timespan of metrics in seconds or append '
                              'm(inutes), h(ours) or d(ays)',
                              default='60m')
+    parser.add_argument('-se', '--serviceengine', help='Service Engine Name')
+    parser.add_argument('-vs', '--virtualservice', help='Virtual Service Name')
     parser.add_argument('-f', '--file', help='Output to named CSV file ')
 
     args = parser.parse_args()
@@ -66,6 +67,7 @@ if __name__ == '__main__':
         tenant = args.tenant
         api_version = args.apiversion
         vs = args.virtualservice
+        se = args.serviceengine
         metrics = args.metrics.split(',')
         granularity = granularity_to_seconds[args.granularity]
         end = datetime.isoformat(datetime.fromisoformat(args.end)
@@ -100,22 +102,45 @@ if __name__ == '__main__':
         api = ApiSession.get_session(controller, user, password,
                                      api_version=api_version)
 
-        vs = api.get_object_by_name('virtualservice', vs, tenant=tenant)
+        if se:
+            se = api.get_object_by_name('serviceengine', se, tenant=tenant)
 
-        if not vs:
-            print(f'Unable to locate Virtual Service "{vs}"')
-            exit()
+            if not se:
+                print(f'Unable to locate Service Engine "{se}"')
+                exit()
 
-        vs_uuid = vs['uuid']
+        if vs == '*':
+            vs = {'uuid': '*'}
+        elif vs:
+            vs = api.get_object_by_name('virtualservice', vs, tenant=tenant)
 
-        params = {'stop': end, 'step': granularity, 'limit': limit,
-                  'metric_id': ','.join(metrics)}
+            if not vs:
+                print(f'Unable to locate Virtual Service "{vs}"')
+                exit()
 
-        metrics = api.get(f'analytics/metrics/virtualservice/{vs_uuid}',
-                          params=params, tenant=tenant).json()
+        if vs and se:
+            # VirtualService metrics being pulled at Service Engine level
 
-        series = metrics['series']
+            params = {'stop': end, 'step': granularity, 'limit': limit,
+                      'metric_id': ','.join(metrics),
+                      'serviceengine_uuid': se['uuid'],
+                      'entity_uuid': vs['uuid'],
+                      'aggregate_entity': True,
+                      'tenant': tenant}
+            entity = 'AGGREGATED'
+        else:
+            entity = vs['uuid'] if vs else se['uuid']
+            params = {'stop': end, 'step': granularity, 'limit': limit,
+                      'metric_id': ','.join(metrics),
+                      'entity_uuid': entity,
+                      'tenant': tenant}
 
+        data = {'metric_requests': [params]}
+
+        metrics = api.post(f'analytics/metrics/collection',
+                           data=data, tenant=tenant).json()
+
+        series = metrics['series'][entity]
         headers = ['Timestamp']
         output = {}
 
@@ -132,7 +157,6 @@ if __name__ == '__main__':
 
         output_table = [[k, *output[k]] for k in sorted(output)]
 
-
         if csv_filename:
             print(f'Outputting data to {csv_filename}')
             with open(csv_filename, 'w', newline='') as csv_file:
@@ -140,7 +164,8 @@ if __name__ == '__main__':
                 csv_writer.writerow(headers)
                 csv_writer.writerows(output_table)
         else:
-            print(tabulate(output_table, headers=headers, tablefmt='outline'))
+            print(tabulate(output_table, headers=headers,
+                           tablefmt='outline'))
 
     else:
         parser.print_help()

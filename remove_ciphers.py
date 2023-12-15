@@ -17,7 +17,7 @@ if hasattr(urllib3, 'disable_warnings'):
 
 UNSAFE_CIPHERS = {
     # Below is not in Controller's unsafe list but probably should be!
-    #'TLS_RSA_WITH_3DES_EDE_CBC_SHA',
+    # 'TLS_RSA_WITH_3DES_EDE_CBC_SHA',
     'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA',
     'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256',
     'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA',
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
         ssl_profiles = api.get_objects_iter('sslprofile', tenant=tenant,
                                             params={'isearch':
-                                                f'(name,{name})'})
+                                                    f'(name,{name})'})
         for ssl_profile in ssl_profiles:
             profile_name = ssl_profile['name']
             print(f'Processing SSL Profile {profile_name}...', end='')
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 print(', '.join(ciphers_removed), end='...')
                 ssl_profile['cipher_enums'] = list(ciphers - UNSAFE_CIPHERS)
                 resp = api.put(f'sslprofile/{ssl_profile["uuid"]}', ssl_profile,
-                            tenant=tenant)
+                               tenant=tenant)
                 if resp.status_code == 200:
                     print('OK!')
                 else:

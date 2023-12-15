@@ -17,6 +17,7 @@ if hasattr(requests.packages.urllib3, 'disable_warnings'):
 if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
+
 def get_vmac(seg_uuid, floating_ip):
     segrp_fip_str = seg_uuid + floating_ip
 
@@ -26,6 +27,7 @@ def get_vmac(seg_uuid, floating_ip):
                             for i in range(0, 10, 2)])
 
     return vmac
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -98,13 +100,13 @@ if __name__ == '__main__':
                     fip_addr = fip['addr']
                     vmac = get_vmac(se_group_uuid, fip_addr)
                     ns_table.append([ns_name, cloud_name, vrf_name,
-                                        se_group_name, fip_addr, vmac,
-                                        vmac_enabled])
+                                     se_group_name, fip_addr, vmac,
+                                     vmac_enabled])
             print(tabulate(ns_table, headers=['Network Service', 'Cloud',
                                               'VRF', 'SE Group',
                                               'Floating IP', 'VMAC',
                                               'VMAC Enabled'],
-                        tablefmt='outline'))
+                           tablefmt='outline'))
         else:
             print('No network services found.')
     else:

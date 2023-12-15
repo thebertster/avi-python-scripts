@@ -103,7 +103,7 @@ if __name__ == '__main__':
             expires = args.expires
 
             obj_data = {'username': auth_user,
-                         'hours': expires}
+                        'hours': expires}
 
             rsp = api.post('authtoken', data=obj_data)
             if rsp.status_code == 200:

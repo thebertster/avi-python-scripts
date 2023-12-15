@@ -11,14 +11,18 @@ if hasattr(requests.packages.urllib3, 'disable_warnings'):
 if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
+
 def get_api_token():
     return os.environ.get('API_TOKEN')
+
 
 def get_api_user():
     return os.environ.get('USER')
 
+
 def get_api_endpoint():
     return os.environ.get('DOCKER_GATEWAY') or 'localhost'
+
 
 if __name__ == "__main__":
     api_endpoint = get_api_endpoint()

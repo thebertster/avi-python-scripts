@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
         if inventory_type == 'vs':
             vs_inventory = api.get_objects_iter('virtualservice-inventory',
-                                   params={'include_name': True})
+                                                params={'include_name': True})
             for vs in vs_inventory:
                 vs_config = vs['config']
                 vs_runtime = vs['runtime']
@@ -83,7 +83,7 @@ if __name__ == '__main__':
                             for s in vs_config['services']]
                 vs_ports = ','.join([f'{a}' + ('' if a == b else f'-{b}') +
                                      ('*' if c else '')
-                                     for (a,b,c) in vs_ports])
+                                     for (a, b, c) in vs_ports])
                 vs_waf = vs_config.get('waf_policy_ref', '#').split('#')[1]
                 vs_app_profile_type = vs.get('app_profile_type',
                                              'APPLICATION_PROFILE_TYPE_UNKNOWN')
@@ -103,7 +103,7 @@ if __name__ == '__main__':
                     for v in vs_runtime['vip_summary']:
                         if 'service_engine' in v:
                             vs_selist.update(s['url'].split('#')[1]
-                                            for s in v['service_engine'])
+                                             for s in v['service_engine'])
                 vs_selist = ','.join(vs_selist)
                 vs_enabled = 'Enabled' if vs_config['enabled'] else 'Disabled'
                 vs_state = vs_runtime['oper_status']['state'].split('OPER_')[1]
@@ -147,14 +147,14 @@ if __name__ == '__main__':
                         params={'include_name': True})
                     p_servers = [(ps['config']['ip']['addr'],
                                   ps['config']['port'],
-                                ps['runtime']['oper_status']['state'].split(
-                                    'OPER_')[1],
-                                ps['health_score']['health_score'])
-                                for ps in ps_inventory]
+                                  ps['runtime']['oper_status']['state'].split(
+                        'OPER_')[1],
+                        ps['health_score']['health_score'])
+                        for ps in ps_inventory]
                     p_servers = ','.join([f'{a}' +
-                                        (f':{b}' if b != p_port else '') +
-                                        f' [{c},{d}]'
-                                        for (a, b, c, d) in p_servers])
+                                          (f':{b}' if b != p_port else '') +
+                                          f' [{c},{d}]'
+                                          for (a, b, c, d) in p_servers])
                     output.extend([p_servers])
 
                 output_table.append(output)
@@ -198,7 +198,6 @@ if __name__ == '__main__':
                 csv_writer.writerows(output_table)
         else:
             print(tabulate(output_table, headers=headers, tablefmt='outline'))
-
 
     else:
         parser.print_help()

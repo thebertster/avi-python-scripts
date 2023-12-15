@@ -23,6 +23,7 @@ def try_parsing_date(possible_date):
             pass
     raise ValueError(f"Non-valid date format for field: '{possible_date}'")
 
+
 if hasattr(requests.packages.urllib3, 'disable_warnings'):
     requests.packages.urllib3.disable_warnings()
 
@@ -70,12 +71,12 @@ if __name__ == '__main__':
             api.delete_session()
             print(f'Discovered Controller version {api_version}.')
         api = ApiSession.get_session(controller, user, password,
-                                        api_version=api_version)
+                                     api_version=api_version)
 
         if args.list:
             licenses = api.get('licensing').json()
             print('Licenses present:')
-            license_list=[]
+            license_list = []
             for lic in licenses['licenses']:
                 license_id = lic.get('license_id', '???')
                 license_name = lic.get('license_name', '???')

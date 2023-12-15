@@ -56,8 +56,9 @@ if __name__ == '__main__':
         api = ApiSession.get_session(controller, user, password,
                                      api_version=api_version)
 
+        waf_params = {'fields': 'name,uuid,mode,paranoia_level'}
         waf_policies = api.get_objects_iter('wafpolicy', tenant=tenant,
-                            params={'fields': 'name,uuid,mode,paranoia_level'})
+                                            params=waf_params)
 
         waf_policy_list = []
 

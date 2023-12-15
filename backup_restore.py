@@ -9,6 +9,7 @@ import requests
 import urllib3
 from avi.sdk.avi_api import ApiSession
 
+
 class BackupRestore:
     def __init__(self, api, filename, passphrase, tenant='*', confirm=False):
 
@@ -32,11 +33,10 @@ class BackupRestore:
 
         print('Looking for matching Virtual Services...')
 
-
         vs_list = self.api.get_objects_iter('virtualservice',
                                             params={'fields':
-                                                'name,uuid,tenant_ref',
-                                                'include_name': 'true'},
+                                                    'name,uuid,tenant_ref',
+                                                    'include_name': 'true'},
                                             tenant=tenant)
 
         for vs in vs_list:
@@ -111,13 +111,14 @@ class BackupRestore:
         for (tenant_name, vs_name), backup in vs_matched.items():
             print(f'Restoring {vs_name}')
             uri = 'configuration/import'
-            data={'passphrase': self.passphrase,
-                  'configuration': backup}
+            data = {'passphrase': self.passphrase,
+                    'configuration': backup}
             rsp = self.api.post(uri, data=data, tenant=tenant_name)
             if rsp.status_code >= 300:
                 raise Exception(f'Error restoring {vs_name}: {rsp.text}')
 
 # Disable certificate warnings
+
 
 if hasattr(requests.packages.urllib3, 'disable_warnings'):
     requests.packages.urllib3.disable_warnings()
@@ -162,7 +163,7 @@ if __name__ == '__main__':
         filename = args.filename
         passphrase = args.passphrase
         include_certs = args.include_certs
-        confirm = not(args.noconfirm)
+        confirm = not (args.noconfirm)
 
         while not controller:
             controller = input('Controller:')

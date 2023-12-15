@@ -56,13 +56,17 @@ This will export the inventory of all pools in the tenant "example_tenant" as we
 
 ## csv_metrics.py
 
-Exports specified VirtualService metrics to the screen or to a simple CSV file for analysis, graphing etc (e.g. using Excel!).
+Exports specified Virtual Service or Service Engine metrics to the screen or to a simple CSV file for analysis, graphing etc (e.g. using Excel!). Also supports aggregated Virtual Service metrics at the SE level.
 
-*Example:*
+*Examples:*
 
 This will display the last three days' worth of hourly metrics of the specified three metrics from the Virtual Service "example_vs" in the tenant "example_tenant":
 
-`csvmetrics.py -c <controller> -t example_tenant -v example_vs -t admin -v rc-demo -m l4_client.avg_rx_bytes,l4_client.avg_tx_bytes,l7_client.avg_ssl_handshakes_new  -g hour -l 3d`
+`csvmetrics.py -c <controller> -t example_tenant -vs example_vs -m l4_client.avg_rx_bytes,l4_client.avg_tx_bytes,l7_client.avg_ssl_handshakes_new -g hour -l 3d`
+
+This will display the last minute's worth of real-time metrics for SSL handshakes across all Virtual Services on the Service Engine "avi-se-example":
+
+`csvmetrics.py -c <controller> -t example_tenant -vs * -se avi-se-example -m l7_client.avg_ssl_handshakes_new -g realtime -l 1m`
 
 ## unused_objects.py
 

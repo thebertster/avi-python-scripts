@@ -12,6 +12,7 @@ if hasattr(requests.packages.urllib3, 'disable_warnings'):
 if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
+
 def ParseAviParams(argv):
     if len(argv) != 2:
         return
@@ -19,17 +20,22 @@ def ParseAviParams(argv):
     print(str(alert_params))
     return alert_params
 
+
 def get_api_token():
     return os.environ.get('API_TOKEN')
+
 
 def get_api_user():
     return os.environ.get('USER')
 
+
 def get_api_endpoint():
     return os.environ.get('DOCKER_GATEWAY') or 'localhost'
 
+
 def get_tenant():
     return os.environ.get('TENANT')
+
 
 def failover_pools(session, pool_uuid, pool_name, retries=5):
     if retries <= 0:
@@ -52,7 +58,7 @@ def failover_pools(session, pool_uuid, pool_name, retries=5):
         pool_obj = session.get(pool_runtime_url).json()[0]
         if pool_obj['oper_status']['state'] == 'OPER_UP':
             if (not highest_up_pool or
-                int(highest_up_pool[1]) < int(priority_label)):
+                    int(highest_up_pool[1]) < int(priority_label)):
                 highest_up_pool = (member, priority_label,
                                    pool_obj['name'])
         elif (not highest_down_pool or
@@ -86,6 +92,7 @@ def failover_pools(session, pool_uuid, pool_name, retries=5):
         return failover_pools(session, pool_uuid, pool_name, retries - 1)
 
     return 'Error setting pool priority: %s' % p_result.text
+
 
 if __name__ == "__main__":
     alert_params = ParseAviParams(sys.argv)

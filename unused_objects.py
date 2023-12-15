@@ -38,7 +38,8 @@ SPECIAL_OBJECT_NAMES = {'vrfcontext': ['management'],
                         'certificatemanagementprofile':
                             ['LetsEncryptCertificateManagementProfile'],
                         'ipaddrgroup': ['Internal'],
-                        'autoscalelaunchconfig': ['default-autoscalelaunchconfig'],
+                        'autoscalelaunchconfig':
+                            ['default-autoscalelaunchconfig'],
                         'protocolparser': ['Default-DHCP', 'Default-Radius',
                                            'Default-FIX', 'Default-TLS'],
                         'role': ['Application-Admin', 'Tenant-Admin',
@@ -87,12 +88,12 @@ if __name__ == '__main__':
                         action='store_true')
     parser_d = parser.add_mutually_exclusive_group()
     parser_d.add_argument('-d', '--delete',
-                        help='Allow deletion of unused objects '
-                        '(with confirmation)',
-                        action='store_true')
+                          help='Allow deletion of unused objects '
+                          '(with confirmation)',
+                          action='store_true')
     parser_d.add_argument('-f', '--force',
-                        help='Delete unused objects without prompting',
-                        action='store_true')
+                          help='Delete unused objects without prompting',
+                          action='store_true')
 
     args = parser.parse_args()
 
@@ -146,7 +147,7 @@ if __name__ == '__main__':
                                                       'fields': 'tenant_ref',
                                                       'include_name': True})
             filtered_unused = [(u_obj['name'],
-                                u_obj.get('tenant_ref','').split('#')[1],
+                                u_obj.get('tenant_ref', '').split('#')[1],
                                 u_obj['uuid'],
                                 u_obj['url'])
                                for u_obj in unused_objects

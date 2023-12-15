@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
         service_engines = api.get_objects_iter('serviceengine',
                                                params={'join_subresources':
-                                                   'vnicdb'})
+                                                       'vnicdb'})
 
         for service_engine in service_engines:
             se_name = service_engine['name']

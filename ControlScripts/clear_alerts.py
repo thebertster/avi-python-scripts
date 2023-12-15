@@ -12,6 +12,7 @@ if hasattr(requests.packages.urllib3, 'disable_warnings'):
 if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
+
 def ParseAviParams(argv):
     if len(argv) != 2:
         return
@@ -19,17 +20,22 @@ def ParseAviParams(argv):
     print(str(alert_params))
     return alert_params
 
+
 def get_api_token():
     return os.environ.get('API_TOKEN')
+
 
 def get_api_user():
     return os.environ.get('USER')
 
+
 def get_api_endpoint():
     return os.environ.get('DOCKER_GATEWAY') or 'localhost'
 
+
 def get_tenant():
     return os.environ.get('TENANT')
+
 
 def clear_vs_down_alerts(session, vs_uuid):
     print(vs_uuid)
@@ -44,6 +50,7 @@ def clear_vs_down_alerts(session, vs_uuid):
         alert_uuid = alert['uuid']
         print(f'Clearing alert {alert_uuid}')
         session.delete(f'alert/{alert_uuid}')
+
 
 if __name__ == "__main__":
     alert_params = ParseAviParams(sys.argv)
