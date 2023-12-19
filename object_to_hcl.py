@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--tenant', help='Tenant',
                         default='admin')
     parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
-    parser.add_argument('-tx', '--tfversion', help='NSX ALB API version')
+    parser.add_argument('-tx', '--tfversion', help='Terraform provider version')
     parser.add_argument('objecttype', help='Type of the object')
     parser_n = parser.add_mutually_exclusive_group()
     parser_n.add_argument('-s', '--search',

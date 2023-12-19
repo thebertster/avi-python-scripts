@@ -2,6 +2,10 @@
 
 Collection of useful ControlScripts
 
+## clear_alerts.py
+
+This ControlScript should be triggered to run on the VS_UP EVENT and will automatically clear any previous alerts generated for the VS_DOWN EVENT for that VS.
+
 ## disable_client_insights.py
 
 This script can be run on a schedule using the in-built Controller scheduler and will automatically disable Client Insights on any Virtual Service where it has been enabled. This is because Client Insights is a tech preview feature that can have impact in production environments due to the large amount of data collected; customers may want to ensure users are not able to accidentally configure this feature.
@@ -26,10 +30,6 @@ Example scheduler configuration:
 ```
 
 When the script is run, it will display output to the EVENTS log (including if there were no Virtual Services found with CI enabled or if there were any API errors), but you must enable the "Include Internal" filter to see these events
-
-## clear_alerts.py
-
-This ControlScript should be triggered to run on the VS_UP EVENT and will automatically clear any previous alerts generated for the VS_DOWN EVENT for that VS.
 
 ## sticky_pool_group.py
 
