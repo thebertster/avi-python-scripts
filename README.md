@@ -54,13 +54,19 @@ This will export the inventory of all pools in the tenant "example_tenant" as we
 
 Script to list and delete licenses from the Controller. This is particularly useful for deleting ENTERPRISE licenses (including evaluation licenses) that are still present in the system after the Controller has been switched to ENTERPRISE with CLOUD SERVICES tier.
 
-## object_to_hcl.py
+## object_to_hcl.py and object_to_hcl2.py
 
-Script to generate Terraform HCL from an existing object or objects. When using Terraform for automation, rather than building the Terraform resource from scratch, it is often easier to create an example of the desired configuration via the UI and then export the configured object directly to Terraform HCL which can then be tweaked to create a templatized resource.
+Scripts to generate Terraform HCL from an existing object or objects. When using Terraform for automation, rather than building the Terraform resource from scratch, it is often easier to create an example of the desired configuration via the UI and then export the configured object directly to Terraform HCL which can then be tweaked to create a templatized resource.
 
-Note 1: This script requires that the terraform executable is in the execution search path.
+object_to_hcl.py makes use of `terraform import` and `terraform show` commands and should work in older version of Terraform.
 
-Note 2: By default, the script will assume the version of the `vmware/avi` Terraform Provider should match the Avi REST API version being used. The Terraform Provider version can be specified explicitly using the `-tx` parameter if required.
+object_to_hcl2.py makes use of import blocks and the experemintal config generation feature of `terraform plan` introduced in Terraform version 1.5.
+
+Both scripts take the same parameters.
+
+Note 1: These scripts require that the terraform executable is in the execution search path.
+
+Note 2: By default, these scripts will assume the version of the `vmware/avi` Terraform Provider should match the Avi REST API version being used. The Terraform Provider version can be specified explicitly using the `-tx` parameter if required.
 
 *Examples:*
 

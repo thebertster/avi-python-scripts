@@ -8,6 +8,7 @@ import urllib3
 from avi.sdk.avi_api import ApiSession
 from tempfile import TemporaryDirectory
 from subprocess import run
+from os.path import abspath
 
 # Disable certificate warnings
 
@@ -52,7 +53,7 @@ if __name__ == '__main__':
         object_type = args.objecttype
         object_names = args.names
         object_search = args.search
-        output_fn = args.filename
+        output_fn = abspath(args.filename)
 
         while not controller:
             controller = input('Controller:')
@@ -111,7 +112,10 @@ if __name__ == '__main__':
                     print('.', end='')
                     object_uuid = object['uuid']
                     object_names = object['name']
-                    rs = f'resource "avi_{object_type}" "{object_uuid}" {{ }}\n'
+                    rs = ('import {\n'
+                          f'  to = avi_{object_type}.{object_uuid}\n'
+                          f'  id = "{object_uuid}"\n'
+                          '}\n')
                     tf_main.write(rs)
                     resources.append((object_uuid, object_names))
                 tf_main.flush()
@@ -126,35 +130,17 @@ if __name__ == '__main__':
                 print(p.stderr.decode('UTF-8'))
             else:
                 print('Importing resources...')
-                with open(output_fn, mode='wb') as output:
-                    for object_uuid, object_names in resources:
-                        print(f'Importing {object_uuid} ({object_names})')
-                        p = run(['terraform',
-                                 f'-chdir={td}',
-                                 'import',
-                                 f'avi_{object_type}.{object_uuid}',
-                                 f'{object_uuid}'],
-                                capture_output=True)
-                        if p.returncode:
-                            print(f'Error invoking terraform import:')
-                            print(p.stderr.decode('UTF-8'))
-                            continue
-                        p = run(['terraform',
-                                f'-chdir={td}',
-                                 'state',
-                                 'show',
-                                 f'avi_{object_type}.{object_uuid} '],
-                                capture_output=True)
-                        if p.returncode:
-                            print(f'Error invoking terraform state show:')
-                            print(p.stderr.decode('UTF-8'))
-                            continue
-                        output.write(bytes(f'# {object_names}\n',
-                                           encoding='UTF-8'))
-                        output.write(p.stdout)
-                        output.write(b'\n\n')
-                print()
-                print(f'Resources have been written to {output_fn}')
+                p = run(['terraform',
+                            f'-chdir={td}',
+                            'plan',
+                            f'-generate-config-out={output_fn}'],
+                        capture_output=True)
+                if p.returncode:
+                    print(f'Error invoking terraform plan:')
+                    print(p.stderr.decode('UTF-8'))
+                else:
+                    print()
+                    print(f'Resources have been written to {output_fn}')
 
     else:
         parser.print_help()
