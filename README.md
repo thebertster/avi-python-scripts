@@ -60,7 +60,7 @@ Scripts to generate Terraform HCL from an existing object or objects. When using
 
 object_to_hcl.py makes use of `terraform import` and `terraform show` commands and should work in older version of Terraform.
 
-object_to_hcl2.py makes use of import blocks and the experemintal config generation feature of `terraform plan` introduced in Terraform version 1.5.
+object_to_hcl2.py makes use of import blocks and the experimental config generation feature of `terraform plan` introduced in Terraform version 1.5.
 
 Both scripts take the same parameters.
 
