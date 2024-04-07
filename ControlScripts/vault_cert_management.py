@@ -13,15 +13,15 @@ TEMP_FILE_ERROR=4
 def certificate_request(csr, common_name, args_dict):
     if 'vault_addr' not in args_dict:
         sys.stderr.write('Vault API Root Address (vault_addr) not specified')
-        exit(PARAMS_ERROR)
+        sys.exit(PARAMS_ERROR)
 
     if 'vault_token' not in args_dict:
         sys.stderr.write('Vault Token (vault_token) not specified')
-        exit(PARAMS_ERROR)
+        sys.exit(PARAMS_ERROR)
 
     if 'vault_path' not in args_dict:
         sys.stderr.write('Vault Sign API Path (vault_path) not specified')
-        exit(PARAMS_ERROR)
+        sys.exit(PARAMS_ERROR)
 
     vault_addr = args_dict['vault_addr']
     vault_token = args_dict['vault_token']
@@ -42,26 +42,21 @@ def certificate_request(csr, common_name, args_dict):
 
     ca_file = False
 
-    if verify_endpoint:
-        try:
-            with NamedTemporaryFile(delete=False) as tf:
-                ca_file = tf.name
-                sys.stdout.write(f'CA certificate written to {ca_file}')
-                tf.write(bytes(verify_endpoint, 'utf-8'))
-
-        except Exception as e:
-            sys.stderr.write(str(e))
-            if ca_file and os.path.exists(ca_file):
-                os.remove(ca_file)
-            exit(TEMP_FILE_ERROR)
-
     try:
+        if verify_endpoint:
+            try:
+                with NamedTemporaryFile(delete=False) as tf:
+                    ca_file = tf.name
+                    sys.stdout.write(f'CA certificate written to {ca_file}')
+                    tf.write(bytes(verify_endpoint, 'utf-8'))
+
+            except Exception as e:
+                sys.stderr.write(str(e))
+                sys.exit(TEMP_FILE_ERROR)
+
         requests.packages.urllib3.disable_warnings()
         r = requests.post(url, headers=headers, json=api_data,
                           verify=ca_file, timeout=api_timeout)
-
-        if ca_file and os.path.exists(ca_file):
-            os.remove(ca_file)
 
         if r.status_code >= 400:
             try:
@@ -70,15 +65,17 @@ def certificate_request(csr, common_name, args_dict):
                 r_errors = r.text
 
             sys.stderr.write(f'Error from Vault API: {r_errors}')
-            exit(REMOTE_API_ERROR)
+            sys.exit(REMOTE_API_ERROR)
 
         r_data = r.json()
         certificate = r_data['data']['certificate']
 
     except Exception as e:
         sys.stderr.write(str(e))
+        sys.exit(REQUESTS_ERROR)
+
+    finally:
         if ca_file and os.path.exists(ca_file):
             os.remove(ca_file)
-        exit(REQUESTS_ERROR)
 
     return certificate
