@@ -58,7 +58,7 @@ def certificate_request(csr, common_name, args_dict):
     try:
         requests.packages.urllib3.disable_warnings()
         r = requests.post(url, headers=headers, json=api_data,
-                          verify=ca_file, timeout=api_timeout)
+                        verify=ca_file, timeout=api_timeout)
 
         if ca_file and os.path.exists(ca_file):
             os.remove(ca_file)
