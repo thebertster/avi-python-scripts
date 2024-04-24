@@ -100,6 +100,18 @@ This will replace references to "System-Default-Cert" with "My-Wildcard-Cert" an
 
 Note: When running in all tenants (`-t *`) where certificates of the same name may exist in multiple tenants, it may be necessary to specify the certificates using their UUIDs rather than their names.
 
+## reset_analytics_configs.py
+
+Disables various expensive Analytics features in Virtual Services. This can be useful in cases where these features were enabled during a testing phase and should be disabled as best practice before going into production.
+
+It is possible to exclude specific Virtual Services from processing if required. The script can be executed against all tenants by specifying `-t *`.
+
+*Example:*
+
+This will disable Client Insights, Non-Significant Logs and Real-Time Metrics in all Virtual Services in the tenant `example_tenant`, excluding the Virtual Services `special_vs1` and `special_vs2`:
+
+`reset_analytics_configs.py -c <controller> -t example_tenant -e special_vs1 special_vs2 -a clientinsights realtimemetrics nonsiglogs`
+
 ## unused_objects.py
 
 Lists objects within the Controller that are not used or referenced by any other objects, with the option to delete such objects.
