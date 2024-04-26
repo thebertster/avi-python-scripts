@@ -3,6 +3,10 @@
 import os
 import sys
 import requests
+try:
+    from requests.exceptions import JSONDecodeError
+except ImportError:
+    from simplejson.errors import JSONDecodeError
 from tempfile import NamedTemporaryFile
 
 PARAMS_ERROR=1
@@ -61,17 +65,22 @@ def certificate_request(csr, common_name, args_dict):
         if r.status_code >= 400:
             try:
                 r_errors = ' | '.join(r.json()['errors'])
-            except requests.exceptions.JSONDecodeError:
+            except JSONDecodeError:
                 r_errors = r.text
 
             sys.stderr.write(f'Error from Vault API: {r_errors}')
             sys.exit(REMOTE_API_ERROR)
 
-        r_data = r.json()
-        certificate = r_data['data']['certificate']
+        try:
+            r_data = r.json()
+            certificate = r_data['data']['certificate']
+        except (JSONDecodeError, KeyError):
+            r_data = f'{r.text[:50]} +...' if len(r.text) > 50 else r.text
+            sys.stderr.write(f'Vault API returned incorrect response: {r_data}')
+            sys.exit(REMOTE_API_ERROR)
 
     except Exception as e:
-        sys.stderr.write(str(e))
+        sys.stderr.write(f'Error during request: {str(e)}')
         sys.exit(REQUESTS_ERROR)
 
     finally:
