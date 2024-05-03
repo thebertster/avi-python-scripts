@@ -65,7 +65,7 @@ def certificate_request(csr, common_name, args_dict):
         if r.status_code >= 400:
             try:
                 r_errors = ' | '.join(r.json()['errors'])
-            except JSONDecodeError:
+            except (JSONDecodeError, KeyError):
                 r_errors = r.text
 
             sys.stderr.write(f'Error from Vault API: {r_errors}')
