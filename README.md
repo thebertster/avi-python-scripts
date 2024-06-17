@@ -122,6 +122,18 @@ This will list all orphaned objects in any tenant of type Pool,PoolGroup,HTTPPol
 
 `unused_objects.py -c <controller> -t * -o pool,poolgroup,httppolicyset,l4policyset -d`
 
+## upgrade_history.py
+
+Outputs the upgrade history for the Controller:
+
+`upgrade_history.py -c <controller>`
+
+*Example:*
+
+This will list all orphaned objects in any tenant of type Pool,PoolGroup,HTTPPolicySet or L4PolicySet and prompt the user whether to delete each orphaned object that is found:
+
+`unused_objects.py -c <controller> -t * -o pool,poolgroup,httppolicyset,l4policyset -d`
+
 ## user_tokens.py
 
 Lists, creates or deletes user API authentication tokens. This script requires SuperUser privileges.
