@@ -124,9 +124,17 @@ This will list all orphaned objects in any tenant of type Pool,PoolGroup,HTTPPol
 
 ## upgrade_history.py
 
-Outputs the upgrade history for the Controller:
+Outputs the upgrade and patch history for Controller, Service Engine Groups and Service Engines.
+
+*Examples:*
+
+This will output the upgrade and patch history of the given Controller:
 
 `upgrade_history.py -c <controller>`
+
+This will output the upgrade and patch history of the given Controller, Service Engine Groups and Service Engines:
+
+`upgrade_history.py -c <controller> -a`
 
 *Example:*
 
