@@ -40,6 +40,10 @@ This will display the last minute's worth of real-time metrics for SSL handshake
 
 `csvmetrics.py -c <controller> -t example_tenant -vs * -se avi-se-example -m l7_client.avg_ssl_handshakes_new -g realtime -l 1m`
 
+This will display the last minute's worth of real-time metrics for WAF rule hits on the rule with ID 941170 - "Check for XSS (6/25)" for the Virtual Service "avi-example":
+
+`csv_metrics.py -c <controller> -t example_tenant -vs example_vs -m waf_rule.sum_matched -g realtime -l 1m -o 941170`
+
 ## inventory_report.py
 
 This script uses the Inventory APIs to export summary information about VS, Pool or Service Engines to the screen in tabular form, or to a CSV file that can then be used for reporting purposes.

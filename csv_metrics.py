@@ -3,7 +3,7 @@
 import argparse
 import csv
 import getpass
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 import urllib3
@@ -49,7 +49,11 @@ if __name__ == '__main__':
                              default='60m')
     parser.add_argument('-se', '--serviceengine', help='Service Engine Name')
     parser.add_argument('-vs', '--virtualservice', help='Virtual Service Name')
-    parser.add_argument('-f', '--file', help='Output to named CSV file ')
+    parser.add_argument('-f', '--file', help='Output to named CSV file')
+    parser.add_argument('-o', '--objid',
+                        help='Optional object ID - required for metrics that '
+                             'relate to specific components such as WAF rule '
+                             'or WAF group metrics')
 
     args = parser.parse_args()
 
@@ -71,9 +75,10 @@ if __name__ == '__main__':
         metrics = args.metrics.split(',')
         granularity = granularity_to_seconds[args.granularity]
         end = datetime.isoformat(datetime.fromisoformat(args.end)
-                                 if args.end else datetime.utcnow())
+                                 if args.end else datetime.now(timezone.utc))
         history = args.history
         csv_filename = args.file
+        obj_id = args.objid
 
         if history[-1] == 'm':
             history = int(history[:-1]) * SECONDS_PER_MINUTE
@@ -135,12 +140,17 @@ if __name__ == '__main__':
                       'entity_uuid': entity,
                       'tenant': tenant}
 
+        if obj_id:
+            params['obj_id'] = obj_id
+
         data = {'metric_requests': [params]}
 
         metrics = api.post(f'analytics/metrics/collection',
                            data=data, tenant=tenant).json()
 
-        series = metrics['series'][entity]
+        series_name = f'{entity},{obj_id}' if obj_id else entity
+
+        series = metrics['series'][series_name]
         headers = ['Timestamp']
         output = {}
 
