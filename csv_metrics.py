@@ -59,6 +59,8 @@ if __name__ == '__main__':
                         help='Optional object ID - required for metrics that '
                              'relate to specific components such as WAF rule '
                              'or WAF group metrics')
+    parser.add_argument('-ao', '--aggregateobjid',
+                        help='Aggregate object IDs', action='store_true')
     parser.add_argument('-pd', '--paddata',
                         help='Pad missing data in the output',
                         action='store_true')
@@ -82,6 +84,7 @@ if __name__ == '__main__':
         pool = args.pool
         se = args.serviceengine
         aggregate = args.aggregate
+        agg_objid = args.aggregateobjid
         metrics = args.metrics.split(',')
         granularity = granularity_to_seconds[args.granularity]
         end = datetime.isoformat(datetime.fromisoformat(args.end)
@@ -154,18 +157,17 @@ if __name__ == '__main__':
 
         if se and not(vs or pool):
             if aggregate:
-                entity = 'AGGREGATED'
                 params['aggregate_entity'] = True
                 params['entity_uuid'] = '*'
                 params['service_engine_uuid'] = se_obj['uuid']
             else:
-                entity = params['entity_uuid'] = se_obj['uuid']
+                params['entity_uuid'] = se_obj['uuid']
         elif vs and not(se or pool):
-            entity = params['entity_uuid'] = vs_obj['uuid']
+            params['entity_uuid'] = vs_obj['uuid']
         elif pool and not(vs or se):
-            entity = params['entity_uuid'] = pool_obj['uuid']
+            params['entity_uuid'] = pool_obj['uuid']
         elif not(se) and vs and pool:
-            entity = params['entity_uuid'] = vs_obj['uuid']
+            params['entity_uuid'] = vs_obj['uuid']
             params['pool_uuid'] = pool_obj['uuid']
         else:
             print('Unsupported combination of options')
@@ -173,6 +175,8 @@ if __name__ == '__main__':
 
         if obj_id:
             params['obj_id'] = obj_id
+            if agg_objid:
+                params['aggregate_obj_id'] = True
 
         data = {'metric_requests': [params]}
 
