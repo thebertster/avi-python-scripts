@@ -28,7 +28,11 @@ This will restore the specific VS called "rc-demo" in the tenant "demo-tenant" f
 
 ## csv_metrics.py
 
-Exports specified Virtual Service or Service Engine metrics to the screen or to a simple CSV file for analysis, graphing etc (e.g. using Excel!). Also supports aggregated Virtual Service metrics at the SE level.
+Exports specified VirtualService, Pool or SE metrics to the screen or to a CSV file for analysis, graphing etc (e.g. using Excel!).
+
+Metrics can be aggregated at the Service Engine level by specifying the -a/--aggregate flag.
+
+Metrics can be broken down for specific objects such as Pool Server or WAF Rule by specifying the -o/--objid parameter.
 
 *Examples:*
 
@@ -36,13 +40,21 @@ This will display the last three days' worth of hourly metrics of the specified 
 
 `csvmetrics.py -c <controller> -t example_tenant -vs example_vs -m l4_client.avg_rx_bytes,l4_client.avg_tx_bytes,l7_client.avg_ssl_handshakes_new -g hour -l 3d`
 
-This will display the last minute's worth of real-time metrics for SSL handshakes across all Virtual Services on the Service Engine "avi-se-example":
+This will display the last minute's worth of aggregated real-time metrics for new SSL handshakes across all Virtual Services on the Service Engine "avi-se-example":
 
-`csvmetrics.py -c <controller> -t example_tenant -vs * -se avi-se-example -m l7_client.avg_ssl_handshakes_new -g realtime -l 1m`
+`csvmetrics.py -c <controller> -t example_tenant -a -se avi-se-example -m l7_client.avg_ssl_handshakes_new -g realtime -l 1m`
 
-This will display the last minute's worth of real-time metrics for WAF rule hits on the rule with ID 941170 - "Check for XSS (6/25)" for the Virtual Service "avi-example":
+This will display the last minute's worth of total HTTP 2xx and 4xx responses for the Virtual Service "example_vs" broken down for the two specified Pool Servers, output to the file "server_metrics.csv":
 
-`csv_metrics.py -c <controller> -t example_tenant -vs example_vs -m waf_rule.sum_matched -g realtime -l 1m -o 941170`
+`csv_metrics.py -c <controller> -t example_tenant -vs example_vs -m l7_server.sum_resp_2xx,l7_server.sum_resp_4xx -g realtime -l 1m -o 10.10.10.1:80,10.10.10.2:80 -f server_metrics.csv`
+
+This will display the last hour's worth of total HTTP responses for the Virtual Service "example_vs" broken down by each Pool Server in the Pool "example_pool" (note the wildcard * character may need to be escaped or quoted in shells like bash that perform "globbing"):
+
+`csv_metrics.py -c <controller> -t example_tenant -vs example_vs -pl example_pool -m l7_server.sum_total_responses -g 5min -l 1h -o *`
+
+This will display the last minute's worth of real-time metrics for WAF rule hits on the rules with rule IDs 941170 and 941171 for the Virtual Service "avi-example":
+
+`csv_metrics.py -c <controller> -t example_tenant -vs example_vs -m waf_rule.sum_matched -g realtime -l 1m -o 941170,941171`
 
 ## inventory_report.py
 

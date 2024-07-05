@@ -48,12 +48,20 @@ if __name__ == '__main__':
                              'm(inutes), h(ours) or d(ays)',
                              default='60m')
     parser.add_argument('-se', '--serviceengine', help='Service Engine Name')
-    parser.add_argument('-vs', '--virtualservice', help='Virtual Service Name')
+    parser.add_argument('-vs', '--virtualservice',
+                        help='Virtual Service Name')
+    parser.add_argument('-a', '--aggregate',
+                        help='Aggregate metrics', action='store_true')
+    parser.add_argument('-pl', '--pool',
+                        help='Pool Name')
     parser.add_argument('-f', '--file', help='Output to named CSV file')
     parser.add_argument('-o', '--objid',
                         help='Optional object ID - required for metrics that '
                              'relate to specific components such as WAF rule '
                              'or WAF group metrics')
+    parser.add_argument('-pd', '--paddata',
+                        help='Pad missing data in the output',
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -71,7 +79,9 @@ if __name__ == '__main__':
         tenant = args.tenant
         api_version = args.apiversion
         vs = args.virtualservice
+        pool = args.pool
         se = args.serviceengine
+        aggregate = args.aggregate
         metrics = args.metrics.split(',')
         granularity = granularity_to_seconds[args.granularity]
         end = datetime.isoformat(datetime.fromisoformat(args.end)
@@ -79,6 +89,7 @@ if __name__ == '__main__':
         history = args.history
         csv_filename = args.file
         obj_id = args.objid
+        pad_data = args.paddata
 
         if history[-1] == 'm':
             history = int(history[:-1]) * SECONDS_PER_MINUTE
@@ -108,37 +119,57 @@ if __name__ == '__main__':
                                      api_version=api_version)
 
         if se:
-            se = api.get_object_by_name('serviceengine', se, tenant=tenant)
+            se_obj = api.get_object_by_name('serviceengine', se, tenant=tenant)
 
-            if not se:
+            if not se_obj:
                 print(f'Unable to locate Service Engine "{se}"')
                 exit()
 
-        if vs == '*':
-            vs = {'uuid': '*'}
-        elif vs:
-            vs = api.get_object_by_name('virtualservice', vs, tenant=tenant)
+        if pool:
+            pool_obj = api.get_object_by_name('pool', pool, tenant=tenant)
 
-            if not vs:
+            if not pool_obj:
+                print(f'Unable to locate Pool "{pool}"')
+                exit()
+
+        if vs:
+            vs_obj = api.get_object_by_name('virtualservice', vs,
+                                            tenant=tenant)
+
+            if not vs_obj:
                 print(f'Unable to locate Virtual Service "{vs}"')
                 exit()
 
-        if vs and se:
-            # VirtualService metrics being pulled at Service Engine level
+        # Possible combinations:
+        # se only - Retrieve Service Engine Metrics
+        # se + aggregate - Aggregated Metrics across SE
+        # vs only - Retrieve Metrics for specified Virtual Service
+        # pool only - Retrive Metrics for specified Pool
+        # vs + pool - Retrieve Metrics for specified Virtual Service and Pool
 
-            params = {'stop': end, 'step': granularity, 'limit': limit,
-                      'metric_id': ','.join(metrics),
-                      'serviceengine_uuid': se['uuid'],
-                      'entity_uuid': vs['uuid'],
-                      'aggregate_entity': True,
-                      'tenant': tenant}
-            entity = 'AGGREGATED'
+        params = {'stop': end, 'step': granularity, 'limit': limit,
+                  'metric_id': ','.join(metrics),
+                  'pad_missing_data': pad_data,
+                  'tenant': tenant}
+
+        if se and not(vs or pool):
+            if aggregate:
+                entity = 'AGGREGATED'
+                params['aggregate_entity'] = True
+                params['entity_uuid'] = '*'
+                params['service_engine_uuid'] = se_obj['uuid']
+            else:
+                entity = params['entity_uuid'] = se_obj['uuid']
+        elif vs and not(se or pool):
+            entity = params['entity_uuid'] = vs_obj['uuid']
+        elif pool and not(vs or se):
+            entity = params['entity_uuid'] = pool_obj['uuid']
+        elif not(se) and vs and pool:
+            entity = params['entity_uuid'] = vs_obj['uuid']
+            params['pool_uuid'] = pool_obj['uuid']
         else:
-            entity = vs['uuid'] if vs else se['uuid']
-            params = {'stop': end, 'step': granularity, 'limit': limit,
-                      'metric_id': ','.join(metrics),
-                      'entity_uuid': entity,
-                      'tenant': tenant}
+            print('Unsupported combination of options')
+            exit()
 
         if obj_id:
             params['obj_id'] = obj_id
@@ -148,34 +179,44 @@ if __name__ == '__main__':
         metrics = api.post(f'analytics/metrics/collection',
                            data=data, tenant=tenant).json()
 
-        series_name = f'{entity},{obj_id}' if obj_id else entity
+        series_data = metrics.get('series', {})
 
-        series = metrics['series'][series_name]
-        headers = ['Timestamp']
-        output = {}
+        num_series = len(series_data)
 
-        for metric in series:
-            metric_name = metric['header']['name']
-            metric_unit = metric['header']['units']
-            headers.append(f'{metric_name} in {metric_unit}')
-            data = metric['data']
-            for data_point in data:
-                timestamp = data_point['timestamp']
-                if timestamp not in output:
-                    output[timestamp] = []
-                output[timestamp].append(data_point['value'])
+        if num_series == 0:
+            print('No data was returned - did you get a parameter wrong?')
+            exit()
 
-        output_table = [[k, *output[k]] for k in sorted(output)]
+        for index, (series_name, series) in enumerate(series_data.items()):
+            headers = ['Timestamp']
+            output = {}
 
-        if csv_filename:
-            print(f'Outputting data to {csv_filename}')
-            with open(csv_filename, 'w', newline='') as csv_file:
-                csv_writer = csv.writer(csv_file, dialect='excel')
-                csv_writer.writerow(headers)
-                csv_writer.writerows(output_table)
-        else:
-            print(tabulate(output_table, headers=headers,
-                           tablefmt='outline'))
+            for metric in series:
+                metric_name = metric['header']['name']
+                metric_unit = metric['header']['units']
+                headers.append(f'{metric_name} in {metric_unit}')
+                data = metric['data']
+                for data_point in data:
+                    timestamp = data_point['timestamp']
+                    if timestamp not in output:
+                        output[timestamp] = []
+                    output[timestamp].append(data_point['value'])
 
+            output_table = [[k, *output[k]] for k in sorted(output)]
+
+            if csv_filename:
+                print(f'Writing to {csv_filename} for series {series_name}')
+                with open(csv_filename, 'a' if index else 'w',
+                          newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file, dialect='excel')
+                    if num_series > 1:
+                        csv_writer.writerow([series_name])
+                    csv_writer.writerow(headers)
+                    csv_writer.writerows(output_table)
+            else:
+                print()
+                print(f'Series {series_name}:')
+                print(tabulate(output_table, headers=headers,
+                            tablefmt='outline'))
     else:
         parser.print_help()
