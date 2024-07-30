@@ -9,10 +9,11 @@ except ImportError:
     from simplejson.errors import JSONDecodeError
 from tempfile import NamedTemporaryFile
 
-PARAMS_ERROR=1
-REMOTE_API_ERROR=2
-REQUESTS_ERROR=3
-TEMP_FILE_ERROR=4
+PARAMS_ERROR = 1
+REMOTE_API_ERROR = 2
+REQUESTS_ERROR = 3
+TEMP_FILE_ERROR = 4
+
 
 def certificate_request(csr, common_name, args_dict):
     if 'vault_addr' not in args_dict:
@@ -60,7 +61,7 @@ def certificate_request(csr, common_name, args_dict):
 
         requests.packages.urllib3.disable_warnings()
         r = requests.post(url, headers=headers, json=api_data,
-                        verify=ca_file, timeout=api_timeout)
+                          verify=ca_file, timeout=api_timeout)
 
         if r.status_code >= 400:
             try:

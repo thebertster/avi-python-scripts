@@ -77,19 +77,19 @@ This is a Certificate Management Profile script for Hashicorp Vault acting as a 
 
 The Certificate Management Profile should be configured with the following parameters:
 
-*vault_addr*:\
+_vault_addr_:\
 **REQUIRED**\
 Base URL for the Vault API.
 
 Example: https://vault_server.contoso.com:8200
 
-*vault_path*:\
+_vault_path_:\
 **REQUIRED**\
 API path for the **sign** API endpoint for the specific PKI secrets engine and role.
 
 Example: /v1/pki_int/sign/contoso-com-role
 
-*vault_token*:\
+_vault_token_:\
 **REQUIRED**\
 An API token with sufficient access to call the signing API.
 
@@ -97,15 +97,15 @@ Note: It is strongly recommended to mark this parameter as "sensitive".
 
 The following optional parameters may be specified:
 
-*vault_namespace*:\
+_vault_namespace_:\
 **OPTIONAL**\
 The Vault namespace under which to make the signing API call. If not specified, the default namespace will be used.
 
-*verify_endpoint*:\
+_verify_endpoint_:\
 **OPTIONAL**\
 The CA certificate chain (in PEM format) that should be used to verify trust for the SSL connection to the Vault API endpoint. If this parameter is not provided, SSL verification for the API calls to Vault will be disabled.
 
-*api_timeout*:\
+_api_timeout_:\
 **OPTIONAL**\
 The timeout that should be applied to the call to the Vault API endpoint. A default timeout of **20 seconds** will be used if this parameter is not specified.
 

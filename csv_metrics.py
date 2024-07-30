@@ -152,8 +152,7 @@ if __name__ == '__main__':
 
         params = {'stop': end, 'step': granularity, 'limit': limit,
                   'metric_id': ','.join(metrics),
-                  'pad_missing_data': pad_data,
-                  'tenant': tenant}
+                  'pad_missing_data': pad_data}
 
         if se and not(vs or pool):
             if aggregate:
