@@ -70,6 +70,18 @@ This will export the inventory of all pools in the tenant "example_tenant" as we
 
 Script to list and delete licenses from the Controller. This is particularly useful for deleting ENTERPRISE licenses (including evaluation licenses) that are still present in the system after the Controller has been switched to ENTERPRISE with CLOUD SERVICES tier.
 
+## logs_to_csv.py
+
+Script to export Virtual Service logs from the Controller to a CSV file. Supports retrieving more than 10,000 logs by iteratively querying the Controller.
+
+The `startdatetime` and `enddatetime` parameters are provided in [ISO8601](https://dencode.com/en/date/iso8601) format. If no timezone offset is provided, the UTC offset from the system on which the script is running will be used. Note that logs entries themselves are always timestamped as UTC.
+
+*Examples:*
+
+This will export logs for the Virtual Service `example_vs` in the tenant `example_tenant` from 1st July 2024 12:00AM EDT (UTC -4 hours) to 15th July 2024 12:00PM EDT to the file `./log_export.csv`:
+
+`logs_to_csv.py -c <controller> -t example_tenant example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
+
 ## object_to_hcl.py and object_to_hcl2.py
 
 Scripts to generate Terraform HCL from an existing object or objects. When using Terraform for automation, rather than building the Terraform resource from scratch, it is often easier to create an example of the desired configuration via the UI and then export the configured object directly to Terraform HCL which can then be tweaked to create a templatized resource.
