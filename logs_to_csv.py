@@ -141,10 +141,10 @@ if __name__ == '__main__':
                     """
                     Note that we cannot assume that r_data['count'] indicates
                     the actual number of logs present in the time interval
-                    as the query may have timed out and only returned partial
-                    results, from which the API is returning a maximum of
-                    10,000 results. Hence we keep iterating until we actually
-                    get no results returned.
+                    as the Controller may still be indexing the logs. The API
+                    call returns once there are 10,000 results available to be
+                    returned even if there are more logs to be indexed. Hence we
+                    keep iterating until we actually get no more results.
                     """
 
                     if res_count > 0:

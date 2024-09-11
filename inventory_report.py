@@ -89,15 +89,21 @@ if __name__ == '__main__':
                                              'APPLICATION_PROFILE_TYPE_UNKNOWN')
                 vs_app_type = vs_app_profile_type.split(
                     'APPLICATION_PROFILE_TYPE_')[1]
+                all_ip_addresses = []
                 if vs_config['type'] == 'VS_TYPE_VH_CHILD':
-                    vs_vips = ','.join([v['ip_address']['addr']
-                                        for v in vs.get('parent_vs_vip', [])])
+                    for v in vs.get('parent_vs_vip', []):
+                        all_ip_addresses.extend([v[ip_type]['addr']
+                                    for ip_type in ('ip_address', 'ip6_address')
+                                    if ip_type in v])
                     vs_fqdns = ','.join(vs_config.get('vh_domain_name', []))
                 else:
-                    vs_vips = ','.join([v['ip_address']['addr']
-                                        for v in vs_config.get('vip', [])])
+                    for v in vs_config.get('vip', []):
+                        all_ip_addresses.extend([v[ip_type]['addr']
+                                    for ip_type in ('ip_address', 'ip6_address')
+                                    if ip_type in v])
                     vs_fqdns = ','.join([d['fqdn']
                                         for d in vs_config.get('dns_info', [])])
+                vs_vips = ','.join(all_ip_addresses)
                 vs_selist = set()
                 if 'vip_summary' in vs_runtime:
                     for v in vs_runtime['vip_summary']:
