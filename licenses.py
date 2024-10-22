@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--user', help='Avi Vantage username',
                         default='admin')
     parser.add_argument('-p', '--password', help='Avi Vantage password')
-    parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
+    parser.add_argument('-x', '--apiversion', help='Avi API version')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-l', '--list', action='store_true',
                        help='List licenses', default=False)

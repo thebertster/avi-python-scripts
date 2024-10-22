@@ -21,13 +21,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-c', '--controller',
-                        help='FQDN or IP address of NSX ALB Controller')
-    parser.add_argument('-u', '--user', help='NSX ALB API Username',
+                        help='FQDN or IP address of Avi Controller')
+    parser.add_argument('-u', '--user', help='Avi API Username',
                         default='admin')
-    parser.add_argument('-p', '--password', help='NSX ALB API Password')
+    parser.add_argument('-p', '--password', help='Avi API Password')
     parser.add_argument('-t', '--tenant', help='Tenant',
                         default='admin')
-    parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
+    parser.add_argument('-x', '--apiversion', help='Avi API version')
     parser.add_argument('-i', '--inventorytype',
                         help='Inventory type (vs, pool, pooldetail, se)',
                         choices=['vs', 'pool', 'pooldetail', 'se'],
@@ -68,7 +68,8 @@ if __name__ == '__main__':
 
         if inventory_type == 'vs':
             vs_inventory = api.get_objects_iter('virtualservice-inventory',
-                                                params={'include_name': True})
+                                                params={'include_name': True},
+                                                tenant=tenant)
             for vs in vs_inventory:
                 vs_config = vs['config']
                 vs_runtime = vs['runtime']
@@ -128,7 +129,8 @@ if __name__ == '__main__':
                        'Service Engines']
         elif inventory_type in ('pool', 'pooldetail'):
             p_inventory = api.get_objects_iter('pool-inventory',
-                                               params={'include_name': True})
+                                               params={'include_name': True},
+                                               tenant=tenant)
             for p in p_inventory:
                 p_config = p['config']
                 p_runtime = p['runtime']
@@ -150,7 +152,8 @@ if __name__ == '__main__':
                 if inventory_type == 'pooldetail':
                     ps_inventory = api.get_objects_iter(
                         f'pool-inventory/{p_uuid}/server',
-                        params={'include_name': True})
+                        params={'include_name': True},
+                        tenant=tenant)
                     p_servers = [(ps['config']['ip']['addr'],
                                   ps['config']['port'],
                                   ps['runtime']['oper_status']['state'].split(
@@ -170,7 +173,8 @@ if __name__ == '__main__':
                 headers.extend(['Servers'])
         elif inventory_type == 'se':
             s_inventory = api.get_objects_iter('serviceengine-inventory',
-                                               params={'include_name': True})
+                                               params={'include_name': True},
+                                               tenant=tenant)
             for s in s_inventory:
                 s_config = s['config']
                 s_runtime = s['runtime']

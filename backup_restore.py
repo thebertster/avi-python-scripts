@@ -133,13 +133,13 @@ if __name__ == '__main__':
     parser.add_argument('filename', help='Backup filename')
     parser.add_argument('-e', '--passphrase', help='Encryption passphrase')
     parser.add_argument('-c', '--controller',
-                        help='FQDN or IP address of NSX ALB Controller')
-    parser.add_argument('-u', '--user', help='NSX ALB API Username',
+                        help='FQDN or IP address of Avi Controller')
+    parser.add_argument('-u', '--user', help='Avi API Username',
                         default='admin')
-    parser.add_argument('-p', '--password', help='NSX ALB API Password')
+    parser.add_argument('-p', '--password', help='Avi API Password')
     parser.add_argument('-t', '--tenant', help='Tenant',
                         default='admin')
-    parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
+    parser.add_argument('-x', '--apiversion', help='Avi API version')
     parser.add_argument('-v', '--vs', help='Virtual Service name or glob',
                         default='*')
     parser.add_argument('-i', '--include_certs', help='Include certificates in '

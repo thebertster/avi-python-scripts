@@ -38,13 +38,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-c', '--controller',
-                        help='FQDN or IP address of NSX ALB Controller')
-    parser.add_argument('-u', '--user', help='NSX ALB API Username',
+                        help='FQDN or IP address of Avi Controller')
+    parser.add_argument('-u', '--user', help='Avi API Username',
                         default='admin')
-    parser.add_argument('-p', '--password', help='NSX ALB API Password')
+    parser.add_argument('-p', '--password', help='Avi API Password')
     parser.add_argument('-t', '--tenant', help='Tenant',
                         default='admin')
-    parser.add_argument('-x', '--apiversion', help='NSX ALB API version')
+    parser.add_argument('-x', '--apiversion', help='Avi API version')
     parser.add_argument('-n', '--name', help='SSL Profile search filter',
                         default='')
     parser.add_argument('-e', '--exclude', help='Comma-separated list of '

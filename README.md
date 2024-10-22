@@ -8,6 +8,8 @@ I have tried to keep package dependencies to a minimum - see requirements.txt. Y
 
 See `<script_name>.py --help` for details on usage and parameters.
 
+Note: For any parameter that supports a wildcard syntax using the `*` character, this will result in "globbing" in most Linux shells (the shell will treat the `*` as filename completion by default). You can prevent globbing by escaping the `*` character (usually with `\`), or by disabling globbing before running the command (in most Linux shells, this is achieved using `set -f`).
+
 ## template.py
 
 Used as a template for script creation. Includes the generic argument parser and session creation code with automatic discovery of API version.
@@ -44,7 +46,7 @@ This will display the last minute's worth of aggregated real-time metrics for ne
 
 `csvmetrics.py -c <controller> -t example_tenant -a -se avi-se-example -m l7_client.avg_ssl_handshakes_new -g realtime -l 1m`
 
-This will display the last hour's worth of total HTTP responses for the Virtual Service "example_vs" broken down by each Pool Server in the Pool "example_pool" (note the wildcard * character may need to be escaped or quoted in shells like bash that perform "globbing"):
+This will display the last hour's worth of total HTTP responses for the Virtual Service "example_vs" broken down by each Pool Server in the Pool "example_pool" (note the wildcard * character may need to be escaped:
 
 `csv_metrics.py -c <controller> -t example_tenant -vs example_vs -pl example_pool -m l7_server.sum_total_responses -g 5min -l 1h -o *`
 
