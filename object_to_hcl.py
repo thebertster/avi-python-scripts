@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 for object in matching_objects:
                     print('.', end='')
                     object_uuid = object['uuid']
-                    object_names = object['name']
+                    object_names = object.get('name', object_uuid)
                     rs = f'resource "avi_{object_type}" "{object_uuid}" {{ }}\n'
                     tf_main.write(rs)
                     resources.append((object_uuid, object_names))

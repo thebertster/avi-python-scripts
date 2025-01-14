@@ -111,7 +111,7 @@ if __name__ == '__main__':
                 for object in matching_objects:
                     print('.', end='')
                     object_uuid = object['uuid']
-                    object_names = object['name']
+                    object_names = object.get('name', object_uuid)
                     rs = ('import {\n'
                           f'  to = avi_{object_type}.{object_uuid}\n'
                           f'  id = "{object_uuid}"\n'
