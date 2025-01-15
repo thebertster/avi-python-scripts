@@ -143,6 +143,7 @@ if __name__ == '__main__':
                                 f'-chdir={td}',
                                  'state',
                                  'show',
+                                 '-no-color',
                                  f'avi_{object_type}.{object_uuid} '],
                                 capture_output=True)
                         if p.returncode:
