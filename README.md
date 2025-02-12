@@ -28,6 +28,24 @@ This will restore the specific VS called "rc-demo" in the tenant "demo-tenant" f
 
 `backup_restore.py -c <controller> -v rc-demo -t demo-tenant restore my_backup.json`
 
+## bulk_change_seg.py
+
+Bulk updates Virtual Services assigned to a source Service Engine Group to a different destination Service Engine Group.
+
+*Examples:*
+
+This will reconfigure all Virtual Services within the specified tenant that are currently using the SE Group "Default-Group" to use the SE Group "DMZ-Group":
+
+`bulk_change_seg.py -c <controller> -t demo-tenant Default-Group DMZ-Group`
+
+This will reconfigure all Virtual Services *except* "specialvs1" and "specialvs2" within the specified tenant that are currently using the SE Group "Default-Group" to use the SE Group "DMZ-Group":
+
+`bulk_change_seg.py -c <controller> -t demo-tenant -e "specialvs1","specialvs2" Default-Group DMZ-Group`
+
+This will reconfigure *only* the Virtual Services named "specialvs1" and "specialvs2" within the specified tenant that are currently using the SE Group "Default-Group" to use the SE Group "DMZ-Group":
+
+`bulk_change_seg.py -c <controller> -t demo-tenant -i "specialvs1","specialvs2" Default-Group DMZ-Group`
+
 ## csv_metrics.py
 
 Exports specified VirtualService, Pool or SE metrics to the screen or to a CSV file for analysis, graphing etc (e.g. using Excel!).
