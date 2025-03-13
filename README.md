@@ -102,6 +102,30 @@ This will export logs for the Virtual Service `example_vs` in the tenant `exampl
 
 `logs_to_csv.py -c <controller> -t example_tenant example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
 
+A standard log filter string can be passed to filter the returned logs, for example this will only export logs where where the `client_ip` is `10.10.10.10`:
+
+`logs_to_csv.py -c <controller> -t example_tenant -fs 'eq(client_ip,"10.10.10.10")' example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
+
+Multiple filters can be passed by repeating the `--fs` parameter, for example this will only export logs where the `client_ip` **eq**uals `10.10.10.10` _and_ the `uri_path` **co**ntains the string `/imgs/`:
+
+`logs_to_csv.py -c <controller> -t example_tenant -fs 'eq(client_ip,"10.10.10.10")' -fs 'co(uri_path,"/imgs/")' example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
+
+Valid filter operators (if appropriate for the datatype) are:
+
+| Op. | Meaning               |
+| --- | --------------------- |
+| eq  | Equals                |
+| lt  | Less Than             |
+| le  | Less Than or Equal    |
+| gt  | Greater Than          |
+| ge  | Greater Than or Equal |
+| ne  | Not Equal             |
+| sw  | Starts With           |
+| co  | Contains              |
+| nc  | Does Not Contain      |
+
+The special field name `all` can be used to search across all available fields.
+
 ## object_to_hcl.py and object_to_hcl2.py
 
 Scripts to generate Terraform HCL from an existing object or objects. When using Terraform for automation, rather than building the Terraform resource from scratch, it is often easier to create an example of the desired configuration via the UI and then export the configured object directly to Terraform HCL which can then be tweaked to create a templatized resource.
