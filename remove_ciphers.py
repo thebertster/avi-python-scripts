@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 if resp.status_code == 200:
                     print('OK!')
                 else:
-                    print('Got error %d' % (resp.status_code))
+                    print(f'Got error {resp.status_code}')
                 print()
             else:
                 print('No unsafe ciphers')

@@ -23,7 +23,7 @@ def get_vmac(seg_uuid, floating_ip):
 
     vmac_id = md5(segrp_fip_str.encode('utf-8')).hexdigest()
 
-    vmac = '0e:' + ':'.join(['%0.2x' % (int(vmac_id[i:i+2], base=16) ^ 255)
+    vmac = '0e:' + ':'.join([f'{(int(vmac_id[i:i+2], base=16) ^ 255):02x}'
                             for i in range(0, 10, 2)])
 
     return vmac

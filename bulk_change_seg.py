@@ -71,7 +71,8 @@ if __name__ == '__main__':
         source_seg_obj = api.get_object_by_name('serviceenginegroup',
                                                 source_seg,
                                                 tenant=tenant,
-                                                params={'fields': 'uuid,url,name'})
+                                                params={'fields':
+                                                        'uuid,url,name'})
 
         if not source_seg_obj:
             print(f'Unable to locate SE Group {source_seg}')
@@ -82,7 +83,8 @@ if __name__ == '__main__':
         dest_seg_obj = api.get_object_by_name('serviceenginegroup',
                                               dest_seg,
                                               tenant=tenant,
-                                              params={'fields': 'uuid,url,name'})
+                                              params={'fields':
+                                                      'uuid,url,name'})
 
         if not dest_seg_obj:
             print(f'Unable to locate SE Group {dest_seg}')
@@ -101,7 +103,7 @@ if __name__ == '__main__':
         }
 
         vs_list = api.get_objects_iter('virtualservice', tenant=tenant,
-                                       params={'refers_to': f'serviceenginegroup:{source_seg_uuid}'})
+                params={'refers_to':f'serviceenginegroup:{source_seg_uuid}'})
 
         successes = 0
         failures = 0

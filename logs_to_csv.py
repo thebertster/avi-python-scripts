@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
         print(f':: Writing to file {filename}...')
 
-        with (open(filename, 'w', newline='')) as csv_file:
+        with (open(filename, 'w', newline='', encoding='UTF-8')) as csv_file:
             csv_writer = csv.writer(csv_file, dialect='excel')
             csv_writer.writerow(field_names)
 
@@ -201,8 +201,8 @@ if __name__ == '__main__':
                         last_entry = results[-1]['report_timestamp']
                         end_date_time = datetime.fromisoformat(last_entry)
                     else:
-                      print(f':: No more logs available')
-                      break
+                        print(':: No more logs available')
+                        break
                 else:
                     print(f':: Error {r.status_code} occurred : giving up!')
                     break

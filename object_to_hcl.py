@@ -86,7 +86,7 @@ if __name__ == '__main__':
         print('Preparing environment', end='')
 
         with TemporaryDirectory() as td:
-            with open(f'{td}/main.tf', mode='w') as tf_main:
+            with open(f'{td}/main.tf', mode='w', encoding='UTF-8') as tf_main:
                 tf_version = tf_version or api_version
                 tf_boilerplate = ['terraform {\n',
                                   '  required_providers {\n',
@@ -107,10 +107,10 @@ if __name__ == '__main__':
                                   '\n']
                 tf_main.writelines(tf_boilerplate)
                 resources = []
-                for object in matching_objects:
+                for obj in matching_objects:
                     print('.', end='')
-                    object_uuid = object['uuid']
-                    object_names = object.get('name', object_uuid)
+                    object_uuid = obj['uuid']
+                    object_names = obj.get('name', object_uuid)
                     rs = f'resource "avi_{object_type}" "{object_uuid}" {{ }}\n'
                     tf_main.write(rs)
                     resources.append((object_uuid, object_names))
@@ -119,10 +119,11 @@ if __name__ == '__main__':
 
             print(f'Initializing Terraform (vmware/avi {tf_version})...')
 
-            p = run(['terraform', f'-chdir={td}', 'init'], capture_output=True)
+            p = run(['terraform', f'-chdir={td}', 'init'],
+                    capture_output=True, check=False)
 
             if p.returncode:
-                print(f'Error invoking terraform init:')
+                print('Error invoking terraform init:')
                 print(p.stderr.decode('UTF-8'))
             else:
                 print('Importing resources...')
@@ -134,9 +135,10 @@ if __name__ == '__main__':
                                  'import',
                                  f'avi_{object_type}.{object_uuid}',
                                  f'{object_uuid}'],
-                                capture_output=True)
+                                capture_output=True,
+                                check=False)
                         if p.returncode:
-                            print(f'Error invoking terraform import:')
+                            print('Error invoking terraform import:')
                             print(p.stderr.decode('UTF-8'))
                             continue
                         p = run(['terraform',
@@ -145,9 +147,10 @@ if __name__ == '__main__':
                                  'show',
                                  '-no-color',
                                  f'avi_{object_type}.{object_uuid} '],
-                                capture_output=True)
+                                capture_output=True,
+                                check=False)
                         if p.returncode:
-                            print(f'Error invoking terraform state show:')
+                            print('Error invoking terraform state show:')
                             print(p.stderr.decode('UTF-8'))
                             continue
                         output.write(bytes(f'# {object_names}\n',

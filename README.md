@@ -106,7 +106,7 @@ A standard log filter string can be passed to filter the returned logs, for exam
 
 `logs_to_csv.py -c <controller> -t example_tenant -fs 'eq(client_ip,"10.10.10.10")' example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
 
-Multiple filters can be passed by repeating the `--fs` parameter, for example this will only export logs where the `client_ip` **eq**uals `10.10.10.10` _and_ the `uri_path` **co**ntains the string `/imgs/`:
+Multiple filters can be passed by repeating the `--fs` parameter, for example this will only export logs where the `client_ip` **eq**uals `10.10.10.10` and the `uri_path` **co**ntains the string `/imgs/`:
 
 `logs_to_csv.py -c <controller> -t example_tenant -fs 'eq(client_ip,"10.10.10.10")' -fs 'co(uri_path,"/imgs/")' example_vs 2024-07-01T00:00-04:00 2024-07-15T12:00-04:00`
 

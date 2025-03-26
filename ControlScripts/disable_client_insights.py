@@ -24,7 +24,7 @@ def get_api_endpoint():
     return os.environ.get('DOCKER_GATEWAY') or 'localhost'
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     api_endpoint = get_api_endpoint()
     user = get_api_user()
     token = get_api_token()

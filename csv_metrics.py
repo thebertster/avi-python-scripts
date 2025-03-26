@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
         data = {'metric_requests': [params]}
 
-        metrics = api.post(f'analytics/metrics/collection',
+        metrics = api.post('analytics/metrics/collection',
                            data=data, tenant=tenant).json()
 
         series_data = metrics.get('series', {})
@@ -210,7 +210,7 @@ if __name__ == '__main__':
             if csv_filename:
                 print(f'Writing to {csv_filename} for series {series_name}')
                 with open(csv_filename, 'a' if index else 'w',
-                          newline='') as csv_file:
+                          newline='', encoding='UTF-8') as csv_file:
                     csv_writer = csv.writer(csv_file, dialect='excel')
                     if num_series > 1:
                         csv_writer.writerow([series_name])

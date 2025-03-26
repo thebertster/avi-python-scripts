@@ -13,7 +13,7 @@ if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
 
-def ParseAviParams(argv):
+def parse_avi_params(argv):
     if len(argv) != 2:
         return
     alert_params = json.loads(argv[1])
@@ -40,21 +40,22 @@ def get_tenant():
 def failover_pools(session, pool_uuid, pool_name, retries=5):
     if retries <= 0:
         return 'Too many retry attempts - aborting!'
-    query = 'refers_to=pool:%s' % pool_uuid
+    query = f'refers_to=pool:{pool_uuid}'
     pg_result = session.get('poolgroup', params=query)
     if pg_result.count() == 0:
-        return 'No pool group found referencing pool %s' % pool_name
+        return f'No pool group found referencing pool {pool_name}'
 
     pg_obj = pg_result.json()['results'][0]
+    pg_uuid = pg_obj['uuid']
 
-    highest_up_pool = None
-    highest_down_pool = None
+    highest_up_pool = ()
+    highest_down_pool = ()
 
     for member in pg_obj['members']:
         priority_label = member['priority_label']
         member_ref = member['pool_ref']
-        pool_runtime_url = ('%s/runtime/detail' %
-                            member_ref.split('/api/')[1])
+        pool_uuid = member_ref.split('/api/')[1]
+        pool_runtime_url = f'{pool_uuid}/runtime/detail'
         pool_obj = session.get(pool_runtime_url).json()[0]
         if pool_obj['oper_status']['state'] == 'OPER_UP':
             if (not highest_up_pool or
@@ -74,28 +75,27 @@ def failover_pools(session, pool_uuid, pool_name, retries=5):
                 'pool group are now up.')
 
     if int(highest_down_pool[1]) <= int(highest_up_pool[1]):
-        return ('No action required. The highest-priority available '
-                'pool (%s) already has a higher priority than the '
-                'highest-priority non-available pool (%s)' %
-                (highest_up_pool[2], highest_down_pool[2]))
+        return (f'No action required. The highest-priority available pool '
+                f'({highest_up_pool[2]}) has a higher priority than the '
+                f'highest-priority non-available pool ({highest_down_pool[2]})')
 
     highest_up_pool[0]['priority_label'] = highest_down_pool[1]
     highest_down_pool[0]['priority_label'] = highest_up_pool[1]
 
-    p_result = session.put('poolgroup/%s' % pg_obj['uuid'], pg_obj)
+    p_result = session.put(f'poolgroup/{pg_uuid}', pg_obj)
     if p_result.status_code < 300:
-        return ', '.join(['Pool %s priority changed to %s' % (p[0], p[1])
+        return ', '.join([f'Pool {p[0]} priority changed to {p[1]}'
                           for p in ((highest_up_pool[2], highest_down_pool[1]),
                                     (highest_down_pool[2], highest_up_pool[1]))
                           ])
     if p_result.status_code == 412:
         return failover_pools(session, pool_uuid, pool_name, retries - 1)
 
-    return 'Error setting pool priority: %s' % p_result.text
+    return f'Error setting pool priority: {p_result.text}'
 
 
-if __name__ == "__main__":
-    alert_params = ParseAviParams(sys.argv)
+if __name__ == '__main__':
+    alert_params = parse_avi_params(sys.argv)
     events = alert_params.get('events', [])
     if len(events) > 0:
         token = get_api_token()

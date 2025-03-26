@@ -202,7 +202,8 @@ if __name__ == '__main__':
                        'Health Score', 'Virtual Services']
         if csv_filename:
             print(f'Outputting data to {csv_filename}')
-            with open(csv_filename, 'w', newline='') as csv_file:
+            with open(csv_filename, 'w',
+                      newline='', encoding='UTF-8') as csv_file:
                 csv_writer = csv.writer(csv_file, dialect='excel')
                 csv_writer.writerow(headers)
                 csv_writer.writerows(output_table)

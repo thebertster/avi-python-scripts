@@ -13,7 +13,7 @@ if hasattr(urllib3, 'disable_warnings'):
     urllib3.disable_warnings()
 
 
-def ParseAviParams(argv):
+def parse_avi_params(argv):
     if len(argv) != 2:
         return
     alert_params = json.loads(argv[1])
@@ -52,8 +52,8 @@ def clear_vs_down_alerts(session, vs_uuid):
         session.delete(f'alert/{alert_uuid}')
 
 
-if __name__ == "__main__":
-    alert_params = ParseAviParams(sys.argv)
+if __name__ == '__main__':
+    alert_params = parse_avi_params(sys.argv)
     for event in alert_params.get('events', []):
         if event['event_id'] == 'VS_UP':
             vs_uuid = event['obj_uuid']

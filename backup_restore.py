@@ -37,7 +37,7 @@ class BackupRestore:
                                             params={'fields':
                                                     'name,uuid,tenant_ref',
                                                     'include_name': 'true'},
-                                            tenant=tenant)
+                                            tenant=self.tenant)
 
         for vs in vs_list:
             vs_name = vs['name']
@@ -75,13 +75,13 @@ class BackupRestore:
                 backup_data[tenant_name] = {}
             backup_data[tenant_name][vs_name] = rsp.json()
 
-        with open(self.filename, 'w') as backup_file:
+        with open(self.filename, 'w', encoding='UTF-8') as backup_file:
             backup_file.write(json.dumps(backup_data))
 
         print('Backup complete.')
 
     def restore(self, vs_match):
-        with open(self.filename, 'r') as backup_file:
+        with open(self.filename, 'r', encoding='UTF-8') as backup_file:
             backup_data = json.loads(backup_file.read())
 
         vs_matched = {}
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         filename = args.filename
         passphrase = args.passphrase
         include_certs = args.include_certs
-        confirm = not (args.noconfirm)
+        confirm = not args.noconfirm
 
         while not controller:
             controller = input('Controller:')
