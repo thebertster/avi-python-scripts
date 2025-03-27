@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to enumerate the mapping between configured VrfContexts and the
+network namespaces used on a specific Service Engine."""
+
 import argparse
 import getpass
 from fnmatch import fnmatch

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to report on the use and/or unconfigure 'expensive' analytics
+features that have been unintentionally configured."""
+
 import argparse
 import getpass
 import json

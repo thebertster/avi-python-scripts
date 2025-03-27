@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Script to disable 'unsafe' ciphers in SSL Profiles."""
+
 import argparse
 import getpass
 

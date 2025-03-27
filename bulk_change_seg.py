@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to automate changing Service Engine Group for Virtual Services
+in bulk."""
+
 import argparse
 import getpass
 

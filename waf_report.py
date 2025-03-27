@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to generate a summary report of WAF Configurations used by
+Virtual Services."""
+
 import argparse
 import getpass
 

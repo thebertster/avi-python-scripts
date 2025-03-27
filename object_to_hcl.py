@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to simplify the import of existing Avi objects into Terraform
+resource files."""
+
 import argparse
 import getpass
 

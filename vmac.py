@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to calculate the Virtual MAC that will be used by the MAC Masquerade
+feature."""
+
 import argparse
 import getpass
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to report on and/or remove 'orphaned' configuration objects that
+are no longer referenced."""
+
 import argparse
 import getpass
 

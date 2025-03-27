@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to automate backup and selective restore of Virtual Service
+Configurations."""
+
 import argparse
 import getpass
 import json

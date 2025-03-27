@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+
+"""Schedule this ControlScript to force disable the Client Insights
+feature if enabled on any Virtual Service."""
+
 import os
 import json
 from avi.sdk.avi_api import ApiSession

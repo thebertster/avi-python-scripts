@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Script to produce a summary report of historical upgrade activities."""
+
 import argparse
 import getpass
 

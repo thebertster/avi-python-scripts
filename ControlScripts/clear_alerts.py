@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+
+"""This ControlScript should be triggered to run on the VS_UP EVENT and will
+automatically clear any previous alerts generated for the VS_DOWN EVENT
+for that VS"""
+
 import os
 import json
 import sys

@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+
+"""This ControlScript Automatically adjusts Pool priorities for a Pool Group
+to prevent automatic fail-back. This ControlScript is largely superceded by
+the deactivate_primary_pool_on_down feature."""
+
 import os
 import sys
 import json

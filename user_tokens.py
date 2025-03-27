@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Script to manage API authentication tokens."""
+
 import argparse
 import getpass
 

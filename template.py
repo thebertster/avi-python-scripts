@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Module description placeholder."""
+
 import argparse
 import getpass
 

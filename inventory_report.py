@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Script to export Inventory Data for Virtual Services, Pools and SEs."""
+
 import argparse
 import csv
 import getpass

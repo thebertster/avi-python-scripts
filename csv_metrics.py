@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to display metrics in a simple table or to export metrics data
+to a CSV file."""
+
 import argparse
 import csv
 import getpass

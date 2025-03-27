@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Script to list and delete Controller Licenses."""
+
 import argparse
 import getpass
 from datetime import datetime

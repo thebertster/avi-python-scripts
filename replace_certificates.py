@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+"""Script to search and replace SSL certificate bindings across multiple
+Virtual Services."""
+
 import argparse
 import getpass
 import json

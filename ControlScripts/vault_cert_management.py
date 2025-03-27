@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""Certificate Management Script for Hashicorp Vault Secrets Engine."""
+
 import os
 import sys
 import requests
