@@ -1,6 +1,6 @@
 # avi-python-scripts
 
-Collection of useful Avi Python scripts. The scripts are intended to standalone as single files that can be easily shared rather than needing multiple files/libraries etc. to be included, hence utility functions (such as the get_all() function) are defined within each script as needed. Please don't think ill of me - it was a conscious decision!
+Collection of useful Avi Python scripts. The scripts are intended to standalone as single files that can be easily shared rather than needing multiple files/libraries etc. to be included.
 
 I have tried to keep package dependencies to a minimum - see requirements.txt. You can install dependencies with:
 
