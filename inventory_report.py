@@ -162,17 +162,37 @@ if __name__ == '__main__':
                         'OPER_')[1],
                         ps['health_score']['health_score'])
                         for ps in ps_inventory]
-                    p_servers = ','.join([f'{a}' +
-                                          (f':{b}' if b != p_port else '') +
-                                          f' [{c},{d}]'
-                                          for (a, b, c, d) in p_servers])
-                    output.extend([p_servers])
+
+                    output.append(','.join([f'{a}' +
+                                            (f':{b}' if b != p_port else '') +
+                                            f' [{c},{d}]'
+                                            for (a, b, c, d) in p_servers]))
+
+                    vs_selist = set()
+                    for vs in p.get('virtualservices', []):
+                        vs_uuid = vs.split('/api/virtualservice/')[1]
+                        rsp = api.get(
+                            f'virtualservice-inventory/{vs_uuid}',
+                            params={'include_name': True},
+                            tenant=tenant)
+
+                        if rsp.status_code < 300:
+                            vs_runtime = rsp.json().get('runtime', {})
+                        else:
+                            vs_runtime = {}
+
+                        if 'vip_summary' in vs_runtime:
+                            for v in vs_runtime['vip_summary']:
+                                if 'service_engine' in v:
+                                    vs_selist.update(s['url'].split('#')[1]
+                                                for s in v['service_engine'])
+                    output.append(','.join(vs_selist))
 
                 output_table.append(output)
             headers = ['Name', 'UUID', 'Tenant', 'Cloud', 'VRF', 'Port',
                        '#Servers', 'State', 'Health Score', 'Virtual Services']
             if inventory_type == 'pooldetail':
-                headers.extend(['Servers'])
+                headers.extend(['Servers', 'Service Engines'])
         elif inventory_type == 'se':
             s_inventory = api.get_objects_iter('serviceengine-inventory',
                                                params={'include_name': True},
