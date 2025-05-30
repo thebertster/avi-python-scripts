@@ -202,6 +202,19 @@ if __name__ == '__main__':
                 s_runtime = s['runtime']
                 s_name = s_config['name']
                 s_uuid = s_config['uuid']
+                rsp = api.get(
+                    f'serviceengine/{s_uuid}',
+                    params={'include_name': True},
+                    tenant=tenant)
+                if rsp.status_code < 300:
+                    s_resources = rsp.json().get('resources',{})
+                else:
+                    s_detail = {}
+                    
+                s_disk = s_resources['disk']
+                s_mem = s_resources['memory']
+                s_cpu = s_resources['num_vcpus']
+                s_qat = s_resources['qat_mode']
                 s_tenant = s_config['tenant_ref'].split('#')[1]
                 s_cloud = s_config['cloud_ref'].split('#')[1]
                 s_seg = s_config['se_group_ref'].split('#')[1]
@@ -217,11 +230,11 @@ if __name__ == '__main__':
 
                 output_table.append([s_name, s_uuid, s_tenant, s_cloud, s_seg,
                                      s_enabled, s_state, s_connected, s_version,
-                                     s_online, s_hs, s_vs])
+                                     s_online, s_hs, s_vs, s_cpu, s_mem, s_disk, s_qat])
 
             headers = ['Name', 'UUID', 'Tenant', 'Cloud', 'SEG', 'State',
                        'Oper State', 'Connectivity', 'Version', 'Online Since',
-                       'Health Score', 'Virtual Services']
+                       'Health Score', 'Virtual Services', 'CPU Cores', 'Memory(mb)', 'Disk(gb)', 'QAT Mode']
         if csv_filename:
             print(f'Outputting data to {csv_filename}')
             with open(csv_filename, 'w',
